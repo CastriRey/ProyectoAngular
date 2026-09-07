@@ -10,3 +10,361 @@ body {
 	overflow-x: hidden;
 	font-family: 'Poppins', 'Segoe UI', sans-serif;
 }
+
+/* Estilos compartidos para las páginas internas, basados en las tarjetas y tablas del proyecto original. */
+app-module-page,
+app-roles-page,
+app-perfiles-page,
+app-rutas-page,
+app-permisos-page,
+app-clientes-page,
+app-dashboard-page {
+	display: block;
+	min-height: 100vh;
+	background: #f5f7fa;
+	color: #1f2937;
+}
+
+app-module-page main,
+app-roles-page main,
+app-perfiles-page main,
+app-rutas-page main,
+app-permisos-page main,
+app-clientes-page main,
+app-dashboard-page main {
+	width: min(1440px, calc(100% - 48px));
+	margin: 0 auto;
+	padding: 42px 0 56px;
+}
+
+app-module-page main > header,
+app-roles-page main > header,
+app-perfiles-page main > header,
+app-rutas-page main > header,
+app-permisos-page main > header,
+app-clientes-page main > header,
+app-dashboard-page main > header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	margin-bottom: 28px;
+}
+
+app-module-page h1,
+app-roles-page h1,
+app-perfiles-page h1,
+app-rutas-page h1,
+app-permisos-page h1,
+app-clientes-page h1,
+app-dashboard-page h1 {
+	margin: 0 0 6px;
+	color: #1f2937;
+	font-size: clamp(1.7rem, 3vw, 2.25rem);
+	font-weight: 700;
+}
+
+app-module-page main > header p,
+app-roles-page main > header p,
+app-perfiles-page main > header p,
+app-rutas-page main > header p,
+app-permisos-page main > header p,
+app-clientes-page main > header p,
+app-dashboard-page main > header p {
+	margin: 0;
+	color: #6b7280;
+}
+
+app-module-page main section,
+app-roles-page main section,
+app-perfiles-page main section,
+app-rutas-page main section,
+app-permisos-page main section,
+app-clientes-page main section,
+app-dashboard-page main section {
+	margin-bottom: 24px;
+}
+
+app-module-page main section,
+app-roles-page main section,
+app-perfiles-page main section,
+app-rutas-page main section,
+app-permisos-page main section,
+app-clientes-page main section,
+app-dashboard-page main section {
+	padding: 24px;
+	border: 0;
+	border-radius: 16px;
+	background: #ffffff;
+	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+app-module-page h2,
+app-roles-page h2,
+app-perfiles-page h2,
+app-rutas-page h2,
+app-permisos-page h2,
+app-dashboard-page h2 {
+	margin: 0 0 18px;
+	color: #1f2937;
+	font-size: 1.15rem;
+}
+
+app-module-page form,
+app-module-page main section form {
+	display: grid;
+	gap: 10px;
+}
+
+app-module-page label,
+app-rutas-page label,
+app-permisos-page label {
+	margin-top: 8px;
+	color: #374151;
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+app-module-page input,
+app-module-page textarea,
+app-rutas-page input,
+app-permisos-page input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 11px 13px;
+	border: 1px solid #d1d5db;
+	border-radius: 10px;
+	background: #ffffff;
+	color: #1f2937;
+	font: inherit;
+}
+
+app-module-page input:focus,
+app-module-page textarea:focus,
+app-rutas-page input:focus,
+app-permisos-page input:focus {
+	outline: 2px solid rgba(37, 99, 235, 0.18);
+	border-color: #2563eb;
+}
+
+app-module-page main section form > div {
+	display: flex;
+	gap: 10px;
+	margin-top: 16px;
+}
+
+app-module-page main section > div:first-child,
+app-rutas-page main section[aria-label],
+app-permisos-page main section[aria-label] {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-bottom: 18px;
+}
+
+app-module-page main section > div:first-child label,
+app-rutas-page main section[aria-label] label,
+app-permisos-page main section[aria-label] label {
+	margin: 0;
+	white-space: nowrap;
+}
+
+app-module-page table,
+app-roles-page table,
+app-perfiles-page table,
+app-rutas-page table,
+app-permisos-page table,
+app-clientes-page table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.94rem;
+}
+
+app-module-page th,
+app-roles-page th,
+app-perfiles-page th,
+app-rutas-page th,
+app-permisos-page th,
+app-clientes-page th {
+	padding: 14px 16px;
+	background: linear-gradient(135deg, #111827, #1f2937);
+	color: #ffffff;
+	font-weight: 600;
+	text-align: left;
+}
+
+app-module-page td,
+app-roles-page td,
+app-perfiles-page td,
+app-rutas-page td,
+app-permisos-page td,
+app-clientes-page td {
+	padding: 14px 16px;
+	border-bottom: 1px solid #e5e7eb;
+	color: #4b5563;
+}
+
+app-module-page tbody tr:hover,
+app-roles-page tbody tr:hover,
+app-perfiles-page tbody tr:hover,
+app-rutas-page tbody tr:hover,
+app-permisos-page tbody tr:hover,
+app-clientes-page tbody tr:hover {
+	background: #f8fafc;
+}
+
+.button,
+app-roles-page button,
+app-perfiles-page button,
+app-rutas-page button,
+app-permisos-page button,
+app-clientes-page button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 16px;
+	border: 0;
+	border-radius: 9px;
+	background: #2563eb;
+	color: #ffffff;
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.button:hover,
+app-roles-page button:hover,
+app-perfiles-page button:hover,
+app-rutas-page button:hover,
+app-permisos-page button:hover,
+app-clientes-page button:hover {
+	filter: brightness(0.94);
+}
+
+app-module-page main section a,
+app-roles-page main a,
+app-perfiles-page main a,
+app-rutas-page main a,
+app-permisos-page main a,
+app-dashboard-page main a {
+	color: #2563eb;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+app-module-page main section a.button,
+app-roles-page main a.button,
+app-perfiles-page main a.button,
+app-rutas-page main a.button,
+app-permisos-page main a.button,
+app-dashboard-page main a.button {
+	color: #ffffff;
+}
+
+app-module-page main > header > a,
+app-module-page main section form a,
+app-module-page main section > a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 16px;
+	border-radius: 9px;
+	background: #2563eb;
+	color: #ffffff;
+	font-weight: 600;
+}
+
+.button-secondary { background: #6b7280; }
+.button-danger { background: #dc2626; }
+.button-success { background: #198754; }
+
+.dashboard-grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 20px;
+}
+
+.metric-card {
+	display: flex;
+	min-height: 120px;
+	flex-direction: column;
+	justify-content: space-between;
+	box-sizing: border-box;
+}
+
+.metric-card span {
+	color: #64748b;
+	font-size: 0.78rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.metric-card strong {
+	color: #0f172a;
+	font-size: 2rem;
+}
+
+.empty-state {
+	padding: 56px 24px !important;
+	color: #6b7280;
+	text-align: center;
+}
+
+@media (max-width: 760px) {
+	app-module-page main,
+	app-roles-page main,
+	app-perfiles-page main,
+	app-rutas-page main,
+	app-permisos-page main,
+	app-clientes-page main,
+	app-dashboard-page main {
+		width: min(100% - 28px, 620px);
+		padding-top: 28px;
+	}
+
+	app-module-page main > header,
+	app-roles-page main > header,
+	app-perfiles-page main > header,
+	app-rutas-page main > header,
+	app-permisos-page main > header,
+	app-clientes-page main > header,
+	app-dashboard-page main > header {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	app-module-page main section,
+	app-roles-page main section,
+	app-perfiles-page main section,
+	app-rutas-page main section,
+	app-permisos-page main section,
+	app-clientes-page main section {
+		padding: 16px;
+	}
+
+	app-module-page main section > div:first-child,
+	app-rutas-page main section[aria-label],
+	app-permisos-page main section[aria-label] {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.dashboard-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.table-wrapper {
+		overflow-x: auto;
+	}
+
+	app-module-page table,
+	app-roles-page table,
+	app-perfiles-page table,
+	app-rutas-page table,
+	app-permisos-page table,
+	app-clientes-page table {
+		min-width: 620px;
+	}
+}
