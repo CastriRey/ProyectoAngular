@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -23,6 +23,14 @@ export class EmpleadosPage {
   protected readonly formularioVisible = signal(false);
   protected readonly editandoId = signal<number | null>(null);
   protected readonly error = signal('');
+  protected readonly busqueda = signal('');
+  protected readonly empleadosFiltrados = computed(() => {
+    const texto = this.busqueda().trim().toLowerCase();
+    if (!texto) return this.empleados();
+    return this.empleados().filter((empleado) =>
+      `${empleado.identificacion_empleado} ${empleado.nombre_empleado} ${empleado.primer_apellido_empleado} ${empleado.segundo_apellido_empleado}`.toLowerCase().includes(texto),
+    );
+  });
   protected readonly form = this.formBuilder.nonNullable.group({
     identificacion_empleado: [0, [Validators.required, Validators.min(1)]],
     nombre_empleado: ['', Validators.required],
@@ -57,6 +65,10 @@ export class EmpleadosPage {
       },
       error: () => { this.error.set('No se pudieron cargar los empleados.'); this.cargando.set(false); },
     });
+  }
+
+  protected actualizarBusqueda(event: Event): void {
+    this.busqueda.set((event.target as HTMLInputElement).value);
   }
 
   protected nuevo(): void {

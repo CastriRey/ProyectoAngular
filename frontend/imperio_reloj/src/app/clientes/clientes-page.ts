@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Cliente } from './cliente';
 import { ClientesService } from './clientes.service';
@@ -8,7 +8,7 @@ import { NavComponent } from '../shared/nav/nav.component';
 
 @Component({
   selector: 'app-clientes-page',
-  imports: [NavComponent, ReactiveFormsModule],
+  imports: [NavComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './clientes-page.html',
 })
 export class ClientesPage {
@@ -20,6 +20,14 @@ export class ClientesPage {
   protected readonly clientes = signal<Cliente[]>([]);
   protected readonly cargando = signal(true);
   protected readonly error = signal('');
+  protected readonly busqueda = signal('');
+  protected readonly clientesFiltrados = computed(() => {
+    const texto = this.busqueda().trim().toLowerCase();
+    if (!texto) return this.clientes();
+    return this.clientes().filter((cliente) =>
+      `${cliente.identificacion_cliente} ${cliente.nombre_cliente} ${cliente.primer_apellido_cliente} ${cliente.segundo_apellido_cliente ?? ''}`.toLowerCase().includes(texto),
+    );
+  });
   protected readonly guardando = signal(false);
   protected readonly formularioVisible = signal(false);
   protected readonly editandoId = signal<number | null>(null);
@@ -61,6 +69,10 @@ export class ClientesPage {
         this.cargando.set(false);
       },
     });
+  }
+
+  protected actualizarBusqueda(event: Event): void {
+    this.busqueda.set((event.target as HTMLInputElement).value);
   }
 
   protected nuevo(): void {

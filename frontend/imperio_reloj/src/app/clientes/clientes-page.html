@@ -2,8 +2,8 @@
 
 <main class="page-main">
   <header class="page-header">
-    <div><h1>Gestión de Clientes</h1><p>Consulta y administra los clientes del sistema.</p></div>
-    <button class="button button-primary" type="button" (click)="nuevo()">Nuevo cliente</button>
+    <div><h1>Gestión de Clientes</h1><p>Administra todos tus clientes registrados.</p></div>
+    <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-person-plus-fill" aria-hidden="true"></i> Nuevo Cliente</button>
   </header>
 
   @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
@@ -25,6 +25,13 @@
     </section>
   }
 
+  <section class="client-search-card">
+    <div class="client-search-box">
+      <span class="client-search-icon"><i class="bi bi-search" aria-hidden="true"></i></span>
+      <input type="search" placeholder="Buscar cliente por nombre, apellido o ID..." [value]="busqueda()" (input)="actualizarBusqueda($event)">
+    </div>
+  </section>
+
   @if (cargando()) {
     <section class="content-card empty-state"><p>Cargando clientes...</p></section>
   } @else if (error()) {
@@ -32,24 +39,16 @@
   } @else if (clientes().length === 0) {
     <section class="content-card empty-state"><p>No hay clientes registrados.</p></section>
   } @else {
-    <section class="content-card list-card"><div class="table-wrapper"><table class="data-table">
-      <thead>
-        <tr>
-          <th>Identificación</th>
-          <th>Nombre</th>
-          <th>Correo</th>
-          <th>Teléfono</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+    <section class="content-card list-card"><div class="table-wrapper"><table class="data-table client-table">
+      <thead><tr><th>ID</th><th>Cliente</th><th>Contacto</th><th>Empleado</th><th class="actions-column">Acciones</th></tr></thead>
       <tbody>
-        @for (cliente of clientes(); track cliente.identificacion_cliente) {
+        @for (cliente of clientesFiltrados(); track cliente.identificacion_cliente) {
           <tr>
             <td>{{ cliente.identificacion_cliente }}</td>
-            <td>{{ cliente.nombre_cliente }} {{ cliente.primer_apellido_cliente }}</td>
-            <td>{{ cliente.correo_cliente || 'Sin correo' }}</td>
-            <td>{{ cliente.telefono_cliente || 'Sin teléfono' }}</td>
-            <td><button type="button" (click)="editar(cliente)">Editar</button> <button type="button" (click)="eliminar(cliente)">Eliminar</button></td>
+            <td><strong>{{ cliente.nombre_cliente }} {{ cliente.primer_apellido_cliente }}</strong><small>{{ cliente.segundo_apellido_cliente }}</small></td>
+            <td><span><i class="bi bi-envelope" aria-hidden="true"></i> {{ cliente.correo_cliente || 'Sin correo' }}</span><span><i class="bi bi-telephone" aria-hidden="true"></i> {{ cliente.telefono_cliente || 'Sin teléfono' }}</span></td>
+            <td><span class="profile-cell"><i class="bi bi-person-badge" aria-hidden="true"></i> {{ cliente.identificacion_empleado }}</span></td>
+            <td class="actions-cell"><button class="watch-action" type="button" routerLink="/relojes-clientes" aria-label="Ver relojes del cliente"><i class="bi bi-watch" aria-hidden="true"></i></button><button class="edit-action" type="button" (click)="editar(cliente)" aria-label="Editar cliente"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(cliente)" aria-label="Eliminar cliente"><i class="bi bi-trash" aria-hidden="true"></i></button></td>
           </tr>
         }
       </tbody>

@@ -8,4 +8,5 @@ export interface Empleado {
   direccion_empleado: string;
   password?: string;
   codigo_perfil_empleado: number;
+  perfil_nombre?: string;
 }

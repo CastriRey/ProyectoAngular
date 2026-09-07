@@ -4,9 +4,9 @@
   <header class="page-header">
     <div>
       <h1>Gestión de Empleados</h1>
-      <p>Consulta y administra los empleados del sistema.</p>
+      <p>Administra todos los empleados registrados.</p>
     </div>
-    <button class="button button-primary" type="button" (click)="nuevo()">Nuevo empleado</button>
+    <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-person-plus-fill" aria-hidden="true"></i> Nuevo Empleado</button>
   </header>
 
   @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
@@ -41,21 +41,28 @@
     </section>
   }
 
+  <section class="employee-search-card">
+    <div class="employee-search-box">
+      <span class="employee-search-icon"><i class="bi bi-search" aria-hidden="true"></i></span>
+      <input type="search" placeholder="Buscar empleado por nombre, apellido o ID..." [value]="busqueda()" (input)="actualizarBusqueda($event)">
+    </div>
+  </section>
+
   @if (cargando()) {
     <section class="content-card empty-state">Cargando empleados...</section>
   } @else {
     <section class="content-card list-card">
       <div class="table-wrapper">
-        <table class="data-table">
-          <thead><tr><th>Identificación</th><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+        <table class="data-table employee-table">
+          <thead><tr><th>ID</th><th>Empleado</th><th>Contacto</th><th>Perfil</th><th class="actions-column">Acciones</th></tr></thead>
           <tbody>
-            @for (empleado of empleados(); track empleado.identificacion_empleado) {
+            @for (empleado of empleadosFiltrados(); track empleado.identificacion_empleado) {
               <tr>
                 <td>{{ empleado.identificacion_empleado }}</td>
-                <td>{{ empleado.nombre_empleado }} {{ empleado.primer_apellido_empleado }} {{ empleado.segundo_apellido_empleado }}</td>
-                <td>{{ empleado.correo_empleado }}</td>
-                <td>{{ empleado.telefono_empleado || 'Sin teléfono' }}</td>
-                <td><button type="button" (click)="editar(empleado)">Editar</button> <button type="button" (click)="eliminar(empleado)">Eliminar</button></td>
+                <td><strong>{{ empleado.nombre_empleado }} {{ empleado.primer_apellido_empleado }}</strong><small>{{ empleado.segundo_apellido_empleado }}</small></td>
+                <td><span><i class="bi bi-envelope" aria-hidden="true"></i> {{ empleado.correo_empleado }}</span><span><i class="bi bi-telephone" aria-hidden="true"></i> {{ empleado.telefono_empleado || 'Sin teléfono' }}</span></td>
+                <td><span class="profile-cell"><i class="bi bi-person-badge" aria-hidden="true"></i> {{ empleado.perfil_nombre || ('Perfil ' + empleado.codigo_perfil_empleado) }}</span></td>
+                <td class="actions-cell"><button class="edit-action" type="button" (click)="editar(empleado)" aria-label="Editar empleado"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(empleado)" aria-label="Eliminar empleado"><i class="bi bi-trash" aria-hidden="true"></i></button></td>
               </tr>
             } @empty { <tr><td colspan="5">No hay empleados registrados.</td></tr> }
           </tbody>

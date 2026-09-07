@@ -13,10 +13,16 @@ class ClienteSerializer(serializers.ModelSerializer):
 class EmpleadoSerializer(serializers.ModelSerializer):
 	# La contraseña nunca se devuelve en las respuestas JSON.
 	password = serializers.CharField(write_only=True, required=False)
+	perfil_nombre = serializers.SerializerMethodField()
 
 	class Meta:
 		model = Empleado
 		fields = '__all__'
+
+	def get_perfil_nombre(self, empleado):
+		# Mostramos el nombre del perfil para evitar otra petición desde Angular.
+		perfil = Perfil.objects.filter(codigo_perfil=empleado.codigo_perfil_empleado).first()
+		return perfil.nombre_perfil if perfil else f'Perfil {empleado.codigo_perfil_empleado}'
 
 	def create(self, validated_data):
 		# El hash evita guardar contraseñas legibles en PostgreSQL.
