@@ -1,0 +1,36 @@
+<app-nav />
+
+<main>
+  <header>
+    <div>
+      <h1>Gestión de Rutas</h1>
+      <p>Administra las rutas y endpoints protegidos del sistema.</p>
+    </div>
+    <button type="button">Nueva ruta</button>
+  </header>
+
+  <!-- El buscador es solo estructura; su comportamiento se agregará con Angular después. -->
+  <section aria-label="Buscar rutas">
+    <label for="buscar-rutas">Buscar por nombre o URL</label>
+    <input id="buscar-rutas" type="search" placeholder="Escribe un nombre o URL">
+  </section>
+
+  <section aria-labelledby="rutas-title">
+    <h2 id="rutas-title">Rutas registradas</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>URL</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4">No hay rutas registradas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>

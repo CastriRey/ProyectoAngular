@@ -1,0 +1,12 @@
+<app-nav />
+
+<main>
+  <h1>Dashboard general</h1>
+  <p>Bienvenido, {{ nombre }}.</p>
+  <p>Esta es la página principal del sistema.</p>
+
+  <nav>
+    <a routerLink="/clientes">Ver clientes</a>
+    <button type="button" (click)="authService.cerrarSesion()">Cerrar sesión</button>
+  </nav>
+</main>

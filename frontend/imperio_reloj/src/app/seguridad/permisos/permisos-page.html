@@ -1,0 +1,40 @@
+<app-nav />
+
+<main>
+  <header>
+    <div>
+      <h1>Gestión de Permisos</h1>
+      <p>Administra los accesos y privilegios del sistema.</p>
+    </div>
+    <button type="button">Nuevo permiso</button>
+  </header>
+
+  <!-- El filtro queda preparado para conectarlo a una signal en el siguiente paso. -->
+  <section aria-label="Buscar permisos">
+    <label for="buscar-permisos">Buscar por perfil o ruta</label>
+    <input id="buscar-permisos" type="search" placeholder="Escribe un perfil o ruta">
+  </section>
+
+  <!-- Cada fila representará la matriz CRUD de un perfil sobre una ruta. -->
+  <section aria-labelledby="permisos-title">
+    <h2 id="permisos-title">Permisos registrados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Perfil</th>
+          <th>Ruta</th>
+          <th>Consultar</th>
+          <th>Insertar</th>
+          <th>Modificar</th>
+          <th>Eliminar</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="7">No hay permisos registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>

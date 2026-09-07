@@ -1,0 +1,121 @@
+<!--
+  Barra de navegación principal.
+  menuAbierto pertenece al componente, por eso Angular puede cerrar el menú
+  anterior antes de abrir otro y también reaccionar a clics fuera del nav.
+-->
+<nav class="main-navbar" aria-label="Navegación principal" (click)="$event.stopPropagation()">
+  <div class="navbar-container">
+    <a class="navbar-brand" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="brand-icon"><i class="bi bi-watch" aria-hidden="true"></i></span>
+      <span>Imperio del Reloj</span>
+    </a>
+
+    <button class="mobile-toggle" type="button" aria-label="Abrir menú" (click)="alternarMenuMovil($event)">
+      <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+
+    <div class="navbar-content" [class.mobile-open]="menuMovilAbierto()">
+      <div class="menu-groups">
+        <div class="nav-dropdown">
+          <button type="button" class="nav-link" [class.active]="menuAbierto() === 'empleados'" (click)="alternarMenu('empleados', $event)">
+            <i class="bi bi-people" aria-hidden="true"></i> Empleados <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (menuAbierto() === 'empleados') {
+            <div class="dropdown-menu">
+              <a routerLink="/empleados"><i class="bi bi-list-ul" aria-hidden="true"></i> Lista de empleados</a>
+              <a routerLink="/empleados/nuevo"><i class="bi bi-person-plus" aria-hidden="true"></i> Crear empleado</a>
+            </div>
+          }
+        </div>
+
+        <div class="nav-dropdown">
+          <button type="button" class="nav-link" [class.active]="menuAbierto() === 'clientes'" (click)="alternarMenu('clientes', $event)">
+            <i class="bi bi-person-badge" aria-hidden="true"></i> Clientes <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (menuAbierto() === 'clientes') {
+            <div class="dropdown-menu">
+              <a routerLink="/clientes"><i class="bi bi-list-ul" aria-hidden="true"></i> Lista de clientes</a>
+              <a routerLink="/clientes/nuevo"><i class="bi bi-person-plus" aria-hidden="true"></i> Crear cliente</a>
+            </div>
+          }
+        </div>
+
+        <div class="nav-dropdown">
+          <button type="button" class="nav-link" [class.active]="menuAbierto() === 'ventas'" (click)="alternarMenu('ventas', $event)">
+            <i class="bi bi-receipt" aria-hidden="true"></i> Ventas <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (menuAbierto() === 'ventas') {
+            <div class="dropdown-menu">
+              <a routerLink="/ventas"><i class="bi bi-list-ul" aria-hidden="true"></i> Lista de ventas</a>
+              <a routerLink="/ventas/nueva"><i class="bi bi-plus-square" aria-hidden="true"></i> Nueva venta</a>
+            </div>
+          }
+        </div>
+
+        <div class="nav-dropdown">
+          <button type="button" class="nav-link" [class.active]="menuAbierto() === 'servicios'" (click)="alternarMenu('servicios', $event)">
+            <i class="bi bi-tools" aria-hidden="true"></i> Servicios <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (menuAbierto() === 'servicios') {
+            <div class="dropdown-menu">
+              <a routerLink="/servicios"><i class="bi bi-list-ul" aria-hidden="true"></i> Lista de servicios</a>
+              <a routerLink="/servicios/finalizados"><i class="bi bi-check2-square" aria-hidden="true"></i> Finalizados</a>
+              <a routerLink="/servicios/nuevo"><i class="bi bi-plus-square" aria-hidden="true"></i> Nuevo servicio</a>
+              <span class="dropdown-divider"></span>
+              <a routerLink="/tipos-servicio"><i class="bi bi-tags" aria-hidden="true"></i> Tipos de servicio</a>
+              <a routerLink="/estados-servicio"><i class="bi bi-list-check" aria-hidden="true"></i> Estados de servicio</a>
+            </div>
+          }
+        </div>
+
+        <div class="nav-dropdown">
+          <button type="button" class="nav-link" [class.active]="menuAbierto() === 'productos'" (click)="alternarMenu('productos', $event)">
+            <i class="bi bi-box-seam" aria-hidden="true"></i> Productos <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (menuAbierto() === 'productos') {
+            <div class="dropdown-menu">
+              <a routerLink="/productos"><i class="bi bi-box" aria-hidden="true"></i> Productos</a>
+              <a routerLink="/productos/nuevo"><i class="bi bi-plus-square" aria-hidden="true"></i> Crear producto</a>
+            </div>
+          }
+        </div>
+
+        <div class="nav-dropdown">
+          <button type="button" class="nav-link" [class.active]="menuAbierto() === 'catalogos'" (click)="alternarMenu('catalogos', $event)">
+            <i class="bi bi-grid" aria-hidden="true"></i> Catálogos <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (menuAbierto() === 'catalogos') {
+            <div class="dropdown-menu">
+              <a routerLink="/marcas"><i class="bi bi-bookmark-star" aria-hidden="true"></i> Marcas</a>
+              <a routerLink="/metodos-pago"><i class="bi bi-credit-card" aria-hidden="true"></i> Métodos de pago</a>
+              <a routerLink="/tipos-servicio"><i class="bi bi-tools" aria-hidden="true"></i> Tipos de servicio</a>
+              <a routerLink="/estados-servicio"><i class="bi bi-clipboard-check" aria-hidden="true"></i> Estados de servicio</a>
+            </div>
+          }
+        </div>
+
+        <div class="nav-dropdown">
+          <button type="button" class="nav-link" [class.active]="menuAbierto() === 'seguridad'" (click)="alternarMenu('seguridad', $event)">
+            <i class="bi bi-shield-lock" aria-hidden="true"></i> Seguridad <i class="bi bi-chevron-down" aria-hidden="true"></i>
+          </button>
+          @if (menuAbierto() === 'seguridad') {
+            <div class="dropdown-menu">
+              <a routerLink="/seguridad"><i class="bi bi-speedometer2" aria-hidden="true"></i> Panel de seguridad</a>
+              <a routerLink="/seguridad/roles"><i class="bi bi-person-gear" aria-hidden="true"></i> Roles</a>
+              <a routerLink="/seguridad/perfiles"><i class="bi bi-person-vcard" aria-hidden="true"></i> Perfiles</a>
+              <a routerLink="/seguridad/rutas"><i class="bi bi-signpost-split" aria-hidden="true"></i> Rutas</a>
+              <a routerLink="/seguridad/permisos"><i class="bi bi-key" aria-hidden="true"></i> Permisos</a>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="user-actions">
+        <span class="user-info"><i class="bi bi-person-circle" aria-hidden="true"></i> {{ nombreUsuario }}</span>
+        <button class="logout-btn" type="button" (click)="authService.cerrarSesion()">
+          <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Salir
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

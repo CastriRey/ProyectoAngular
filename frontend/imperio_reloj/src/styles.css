@@ -1,0 +1,12 @@
+/* El navegador agrega margen al body por defecto; eliminarlo evita el borde blanco. */
+html,
+body {
+	width: 100%;
+	min-height: 100%;
+	margin: 0;
+}
+
+body {
+	overflow-x: hidden;
+	font-family: 'Poppins', 'Segoe UI', sans-serif;
+}

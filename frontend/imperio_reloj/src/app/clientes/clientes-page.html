@@ -1,0 +1,35 @@
+<app-nav />
+
+<main>
+  <h1>Clientes</h1>
+
+  @if (cargando()) {
+    <p>Cargando clientes...</p>
+  } @else if (error()) {
+    <p>{{ error() }}</p>
+    <button type="button" (click)="cargarClientes()">Reintentar</button>
+  } @else if (clientes().length === 0) {
+    <p>No hay clientes registrados.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Identificación</th>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cliente of clientes(); track cliente.identificacion_cliente) {
+          <tr>
+            <td>{{ cliente.identificacion_cliente }}</td>
+            <td>{{ cliente.nombre_cliente }} {{ cliente.primer_apellido_cliente }}</td>
+            <td>{{ cliente.correo_cliente || 'Sin correo' }}</td>
+            <td>{{ cliente.telefono_cliente || 'Sin teléfono' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</main>

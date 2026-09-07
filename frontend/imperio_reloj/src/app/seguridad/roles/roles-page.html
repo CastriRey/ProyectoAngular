@@ -1,0 +1,31 @@
+<app-nav />
+
+<main>
+  <!-- Encabezado de la sección; las acciones tendrán funcionalidad en el siguiente paso. -->
+  <header>
+    <div>
+      <h1>Gestión de Roles</h1>
+      <p>Administra los roles del sistema.</p>
+    </div>
+    <button type="button">Nuevo rol</button>
+  </header>
+
+  <!-- Tabla estructural: posteriormente se llenará desde la API de roles. -->
+  <section aria-labelledby="roles-title">
+    <h2 id="roles-title">Roles registrados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre del rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="3">No hay roles registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>

@@ -1,0 +1,47 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="login-title">
+    <header class="login-header">
+      <!-- El círculo sustituye al logotipo del proyecto original por ahora. -->
+      <div class="logo-circle" aria-hidden="true"><i class="bi bi-watch"></i></div>
+      <h1 id="login-title">Imperio del Reloj</h1>
+      <p>Inicia sesión para continuar</p>
+    </header>
+
+    <div class="card-body">
+      @if (error()) {
+        <!-- Este mensaje aparece cuando Django rechaza las credenciales. -->
+        <p class="alert" role="alert">{{ error() }}</p>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()">
+        <div class="form-field">
+          <label for="correo">Correo electrónico</label>
+          <div class="input-group">
+            <i class="input-icon bi bi-envelope-fill" aria-hidden="true"></i>
+            <input id="correo" type="email" formControlName="correo" autocomplete="email" placeholder="correo@ejemplo.com">
+          </div>
+          @if (loginForm.controls.correo.touched && loginForm.controls.correo.invalid) {
+            <small>Escribe un correo válido.</small>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="contrasena">Contraseña</label>
+          <div class="input-group">
+            <i class="input-icon bi bi-lock-fill" aria-hidden="true"></i>
+            <input id="contrasena" type="password" formControlName="contrasena" autocomplete="current-password" placeholder="********">
+          </div>
+          @if (loginForm.controls.contrasena.touched && loginForm.controls.contrasena.invalid) {
+            <small>La contraseña es obligatoria.</small>
+          }
+        </div>
+
+        <button class="btn-login" type="submit" [disabled]="enviando()">
+          {{ enviando() ? 'Ingresando...' : 'Iniciar sesión' }}
+        </button>
+      </form>
+
+      <p class="footer-text">Sistema de gestión relojera</p>
+    </div>
+  </section>
+</main>

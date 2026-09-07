@@ -1,0 +1,31 @@
+<app-nav />
+
+<main>
+  <header>
+    <div>
+      <h1>Gestión de Perfiles</h1>
+      <p>Administra los perfiles y su relación con roles.</p>
+    </div>
+    <button type="button">Nuevo perfil</button>
+  </header>
+
+  <!-- Más adelante esta tabla mostrará perfiles obtenidos desde Django. -->
+  <section aria-labelledby="perfiles-title">
+    <h2 id="perfiles-title">Perfiles registrados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Perfil</th>
+          <th>Rol asociado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4">No hay perfiles registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>

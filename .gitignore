@@ -1,0 +1,37 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Entornos virtuales locales
+venv/
+.venv/
+env/
+ENV/
+
+# Configuracion local y secretos
+.env
+.env.*
+!.env.example
+
+# Bases de datos locales
+*.sqlite3
+
+# Archivos generados por Django
+media/
+staticfiles/
+
+# Frontend: dependencias, compilacion y caches
+frontend/**/node_modules/
+frontend/**/dist/
+frontend/**/.angular/cache/
+frontend/**/coverage/
+
+# IDE y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
