@@ -158,47 +158,23 @@ export const routes: Routes = [
 	modulo('estados-servicio/:id/eliminar', 'Eliminar estado de servicio', 'Confirma la eliminación del estado.', {
 		tipo: 'confirmacion', rutaLista: '/estados-servicio', rutaNuevo: null, columnas: [],
 	}),
-	// Las cuatro pantallas de seguridad quedan protegidas igual que el dashboard.
+	// Las cuatro pantallas de seguridad usan componentes CRUD reales.
 	{ path: 'seguridad/roles', component: RolesPage, canActivate: [authGuard] },
+	{ path: 'seguridad/roles/nuevo', component: RolesPage, canActivate: [authGuard] },
+	{ path: 'seguridad/roles/:id/editar', component: RolesPage, canActivate: [authGuard] },
+	{ path: 'seguridad/roles/:id/eliminar', component: RolesPage, canActivate: [authGuard] },
 	{ path: 'seguridad/perfiles', component: PerfilesPage, canActivate: [authGuard] },
+	{ path: 'seguridad/perfiles/nuevo', component: PerfilesPage, canActivate: [authGuard] },
+	{ path: 'seguridad/perfiles/:id/editar', component: PerfilesPage, canActivate: [authGuard] },
+	{ path: 'seguridad/perfiles/:id/eliminar', component: PerfilesPage, canActivate: [authGuard] },
 	{ path: 'seguridad/rutas', component: RutasPage, canActivate: [authGuard] },
+	{ path: 'seguridad/rutas/nuevo', component: RutasPage, canActivate: [authGuard] },
+	{ path: 'seguridad/rutas/:id/editar', component: RutasPage, canActivate: [authGuard] },
+	{ path: 'seguridad/rutas/:id/eliminar', component: RutasPage, canActivate: [authGuard] },
 	{ path: 'seguridad/permisos', component: PermisosPage, canActivate: [authGuard] },
+	{ path: 'seguridad/permisos/nuevo', component: PermisosPage, canActivate: [authGuard] },
+	{ path: 'seguridad/permisos/:id/editar', component: PermisosPage, canActivate: [authGuard] },
+	{ path: 'seguridad/permisos/:id/eliminar', component: PermisosPage, canActivate: [authGuard] },
 	{ path: 'seguridad', redirectTo: 'seguridad/roles', pathMatch: 'full' },
-	modulo('seguridad/roles/nuevo', 'Nuevo rol', 'Crea un rol de seguridad.', {
-		tipo: 'formulario', rutaLista: '/seguridad/roles', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/roles/:id/editar', 'Editar rol', 'Actualiza un rol de seguridad.', {
-		tipo: 'formulario', rutaLista: '/seguridad/roles', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/roles/:id/eliminar', 'Eliminar rol', 'Confirma la eliminación del rol.', {
-		tipo: 'confirmacion', rutaLista: '/seguridad/roles', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/perfiles/nuevo', 'Nuevo perfil', 'Crea un perfil y asígnale un rol.', {
-		tipo: 'formulario', rutaLista: '/seguridad/perfiles', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/perfiles/:id/editar', 'Editar perfil', 'Actualiza un perfil de seguridad.', {
-		tipo: 'formulario', rutaLista: '/seguridad/perfiles', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/perfiles/:id/eliminar', 'Eliminar perfil', 'Confirma la eliminación del perfil.', {
-		tipo: 'confirmacion', rutaLista: '/seguridad/perfiles', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/rutas/nuevo', 'Nueva ruta', 'Crea una ruta protegida.', {
-		tipo: 'formulario', rutaLista: '/seguridad/rutas', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/rutas/:id/editar', 'Editar ruta', 'Actualiza una ruta protegida.', {
-		tipo: 'formulario', rutaLista: '/seguridad/rutas', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/rutas/:id/eliminar', 'Eliminar ruta', 'Confirma la eliminación de la ruta.', {
-		tipo: 'confirmacion', rutaLista: '/seguridad/rutas', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/permisos/nuevo', 'Nuevo permiso', 'Asigna acciones de un perfil sobre una ruta.', {
-		tipo: 'formulario', rutaLista: '/seguridad/permisos', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/permisos/:id/editar', 'Editar permiso', 'Actualiza las acciones permitidas.', {
-		tipo: 'formulario', rutaLista: '/seguridad/permisos', rutaNuevo: null, columnas: [],
-	}),
-	modulo('seguridad/permisos/:id/eliminar', 'Eliminar permiso', 'Confirma la eliminación del permiso.', {
-		tipo: 'confirmacion', rutaLista: '/seguridad/permisos', rutaNuevo: null, columnas: [],
-	}),
 	{ path: '**', redirectTo: 'login' },
 ];

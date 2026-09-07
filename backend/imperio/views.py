@@ -5,8 +5,14 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Cliente, Empleado
-from .serializers import ClienteSerializer
+from .models import Cliente, Empleado, Permiso, Perfil, Rol, Ruta
+from .serializers import (
+	ClienteSerializer,
+	PermisoSerializer,
+	PerfilSerializer,
+	RolSerializer,
+	RutaSerializer,
+)
 
 
 @api_view(['POST'])
@@ -57,3 +63,23 @@ def login_empleado(request):
 class ClienteViewSet(viewsets.ModelViewSet):
 	queryset = Cliente.objects.all().order_by('identificacion_cliente')
 	serializer_class = ClienteSerializer
+
+
+class RolViewSet(viewsets.ModelViewSet):
+	queryset = Rol.objects.all().order_by('codigo_rol')
+	serializer_class = RolSerializer
+
+
+class PerfilViewSet(viewsets.ModelViewSet):
+	queryset = Perfil.objects.all().order_by('codigo_perfil')
+	serializer_class = PerfilSerializer
+
+
+class RutaViewSet(viewsets.ModelViewSet):
+	queryset = Ruta.objects.all().order_by('codigo_ruta')
+	serializer_class = RutaSerializer
+
+
+class PermisoViewSet(viewsets.ModelViewSet):
+	queryset = Permiso.objects.all().order_by('codigo_perfil_permiso', 'codigo_ruta_permiso')
+	serializer_class = PermisoSerializer

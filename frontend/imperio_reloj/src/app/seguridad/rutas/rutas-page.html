@@ -6,8 +6,25 @@
       <h1>Gestión de Rutas</h1>
       <p>Administra las rutas y endpoints protegidos del sistema.</p>
     </div>
-    <button type="button">Nueva ruta</button>
+    <button type="button" (click)="nuevo()">Nueva ruta</button>
   </header>
+
+  @if (error()) { <p role="alert">{{ error() }}</p> }
+
+  @if (formularioVisible()) {
+    <section>
+      <h2>{{ editandoId() ? 'Editar ruta' : 'Nueva ruta' }}</h2>
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <label for="nombre-ruta">Nombre</label><input id="nombre-ruta" type="text" formControlName="nombre_ruta">
+        <label for="url-ruta">URL</label><input id="url-ruta" type="text" formControlName="url_ruta">
+        <label for="nodo-ruta">Nodo</label><input id="nodo-ruta" type="text" maxlength="1" formControlName="nodo_ruta">
+        <label for="padre-ruta">Ruta padre</label><input id="padre-ruta" type="number" formControlName="padre_ruta">
+        <label for="orden-ruta">Orden</label><input id="orden-ruta" type="number" formControlName="orden_ruta">
+        <button type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button type="button" (click)="cancelar()">Cancelar</button>
+      </form>
+    </section>
+  }
 
   <!-- El buscador es solo estructura; su comportamiento se agregará con Angular después. -->
   <section aria-label="Buscar rutas">
@@ -27,9 +44,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td colspan="4">No hay rutas registradas.</td>
-        </tr>
+        @for (ruta of rutas(); track ruta.codigo_ruta) {
+          <tr><td>{{ ruta.codigo_ruta }}</td><td>{{ ruta.nombre_ruta }}</td><td>{{ ruta.url_ruta }}</td><td><button type="button" (click)="editar(ruta)">Editar</button> <button type="button" (click)="eliminar(ruta)">Eliminar</button></td></tr>
+        } @empty { <tr><td colspan="4">No hay rutas registradas.</td></tr> }
       </tbody>
     </table>
   </section>

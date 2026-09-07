@@ -6,8 +6,27 @@
       <h1>Gestión de Perfiles</h1>
       <p>Administra los perfiles y su relación con roles.</p>
     </div>
-    <button type="button">Nuevo perfil</button>
+    <button type="button" (click)="nuevo()">Nuevo perfil</button>
   </header>
+
+  @if (error()) { <p role="alert">{{ error() }}</p> }
+
+  @if (formularioVisible()) {
+    <section>
+      <h2>{{ editandoId() ? 'Editar perfil' : 'Nuevo perfil' }}</h2>
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <label for="nombre-perfil">Nombre del perfil</label>
+        <input id="nombre-perfil" type="text" formControlName="nombre_perfil">
+        <label for="rol-perfil">Rol asociado</label>
+        <select id="rol-perfil" formControlName="codigo_rol">
+          <option [ngValue]="0">Selecciona un rol</option>
+          @for (rol of roles(); track rol.codigo_rol) { <option [ngValue]="rol.codigo_rol">{{ rol.nombre_rol }}</option> }
+        </select>
+        <button type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button type="button" (click)="cancelar()">Cancelar</button>
+      </form>
+    </section>
+  }
 
   <!-- Más adelante esta tabla mostrará perfiles obtenidos desde Django. -->
   <section aria-labelledby="perfiles-title">
@@ -22,9 +41,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td colspan="4">No hay perfiles registrados.</td>
-        </tr>
+        @for (perfil of perfiles(); track perfil.codigo_perfil) {
+          <tr>
+            <td>{{ perfil.codigo_perfil }}</td>
+            <td>{{ perfil.nombre_perfil }}</td>
+            <td>{{ perfil.codigo_rol }}</td>
+            <td><button type="button" (click)="editar(perfil)">Editar</button> <button type="button" (click)="eliminar(perfil)">Eliminar</button></td>
+          </tr>
+        } @empty { <tr><td colspan="4">No hay perfiles registrados.</td></tr> }
       </tbody>
     </table>
   </section>

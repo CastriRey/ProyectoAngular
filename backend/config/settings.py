@@ -91,6 +91,19 @@ DATABASES = {
         # }
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql', # Tipo de Base de Datos
+#         'NAME': 'relojeria_db', # SID o Servicio de Oracle
+#         'USER': 'usuario_relojeria', # Usuario de Base de Datos Oracle
+#         'PASSWORD': '1234', # Contraseña Usuario
+#         'HOST': 'localhost', # Servidor
+#         'PORT': '5432' # Puerto
+#         # 'OPTIONS': {
+#         #     'service_name': 'xepdb1'   # fuerza a usar Service Name
+#         # }
+#     }
+# }
 
 
 # Password validation

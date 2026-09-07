@@ -6,8 +6,28 @@
       <h1>Gestión de Permisos</h1>
       <p>Administra los accesos y privilegios del sistema.</p>
     </div>
-    <button type="button">Nuevo permiso</button>
+    <button type="button" (click)="nuevo()">Nuevo permiso</button>
   </header>
+
+  @if (error()) { <p role="alert">{{ error() }}</p> }
+
+  @if (formularioVisible()) {
+    <section>
+      <h2>{{ editandoId() ? 'Editar permiso' : 'Nuevo permiso' }}</h2>
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <label for="perfil-permiso">Perfil</label>
+        <select id="perfil-permiso" formControlName="codigo_perfil_permiso"><option [ngValue]="0">Selecciona un perfil</option>@for (perfil of perfiles(); track perfil.codigo_perfil) { <option [ngValue]="perfil.codigo_perfil">{{ perfil.nombre_perfil }}</option> }</select>
+        <label for="ruta-permiso">Ruta</label>
+        <select id="ruta-permiso" formControlName="codigo_ruta_permiso"><option [ngValue]="0">Selecciona una ruta</option>@for (ruta of rutas(); track ruta.codigo_ruta) { <option [ngValue]="ruta.codigo_ruta">{{ ruta.url_ruta }}</option> }</select>
+        <label>Consultar <select formControlName="consultar"><option value="S">Sí</option><option value="N">No</option></select></label>
+        <label>Insertar <select formControlName="insertar"><option value="S">Sí</option><option value="N">No</option></select></label>
+        <label>Modificar <select formControlName="modificar"><option value="S">Sí</option><option value="N">No</option></select></label>
+        <label>Eliminar <select formControlName="eliminar"><option value="S">Sí</option><option value="N">No</option></select></label>
+        <button type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button type="button" (click)="cancelar()">Cancelar</button>
+      </form>
+    </section>
+  }
 
   <!-- El filtro queda preparado para conectarlo a una signal en el siguiente paso. -->
   <section aria-label="Buscar permisos">
@@ -31,9 +51,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td colspan="7">No hay permisos registrados.</td>
-        </tr>
+        @for (permiso of permisos(); track permiso.id) {
+          <tr><td>{{ permiso.codigo_perfil_permiso }}</td><td>{{ permiso.codigo_ruta_permiso }}</td><td>{{ permiso.consultar }}</td><td>{{ permiso.insertar }}</td><td>{{ permiso.modificar }}</td><td>{{ permiso.eliminar }}</td><td><button type="button" (click)="editar(permiso)">Editar</button> <button type="button" (click)="eliminar(permiso)">Eliminar</button></td></tr>
+        } @empty { <tr><td colspan="7">No hay permisos registrados.</td></tr> }
       </tbody>
     </table>
   </section>

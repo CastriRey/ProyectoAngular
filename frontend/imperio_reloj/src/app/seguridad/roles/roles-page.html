@@ -1,16 +1,28 @@
 <app-nav />
 
 <main>
-  <!-- Encabezado de la sección; las acciones tendrán funcionalidad en el siguiente paso. -->
   <header>
     <div>
       <h1>Gestión de Roles</h1>
       <p>Administra los roles del sistema.</p>
     </div>
-    <button type="button">Nuevo rol</button>
+    <button type="button" (click)="nuevo()">Nuevo rol</button>
   </header>
 
-  <!-- Tabla estructural: posteriormente se llenará desde la API de roles. -->
+  @if (error()) { <p role="alert">{{ error() }}</p> }
+
+  @if (formularioVisible()) {
+    <section>
+      <h2>{{ editandoId() ? 'Editar rol' : 'Nuevo rol' }}</h2>
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <label for="nombre-rol">Nombre del rol</label>
+        <input id="nombre-rol" type="text" formControlName="nombre_rol">
+        <button type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button type="button" (click)="cancelar()">Cancelar</button>
+      </form>
+    </section>
+  }
+
   <section aria-labelledby="roles-title">
     <h2 id="roles-title">Roles registrados</h2>
     <table>
@@ -22,9 +34,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td colspan="3">No hay roles registrados.</td>
-        </tr>
+        @for (rol of roles(); track rol.codigo_rol) {
+          <tr>
+            <td>{{ rol.codigo_rol }}</td>
+            <td>{{ rol.nombre_rol }}</td>
+            <td><button type="button" (click)="editar(rol)">Editar</button> <button type="button" (click)="eliminar(rol)">Eliminar</button></td>
+          </tr>
+        } @empty { <tr><td colspan="3">No hay roles registrados.</td></tr> }
       </tbody>
     </table>
   </section>
