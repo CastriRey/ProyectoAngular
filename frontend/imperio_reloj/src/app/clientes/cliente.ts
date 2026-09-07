@@ -7,4 +7,5 @@ export interface Cliente {
   telefono_cliente: string | null;
   identificacion_empleado: number;
   comentarios: string | null;
+  fecha_registro_cliente?: string;
 }

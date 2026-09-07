@@ -1,0 +1,66 @@
+<app-nav />
+
+<main class="page-main">
+  <header class="page-header">
+    <div>
+      <h1>Gestión de Empleados</h1>
+      <p>Consulta y administra los empleados del sistema.</p>
+    </div>
+    <button class="button button-primary" type="button" (click)="nuevo()">Nuevo empleado</button>
+  </header>
+
+  @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
+
+  @if (formularioVisible()) {
+    <section class="content-card">
+      <h2>{{ editandoId() ? 'Editar empleado' : 'Nuevo empleado' }}</h2>
+      <form class="data-form" [formGroup]="form" (ngSubmit)="guardar()">
+        <label for="identificacion-empleado">Identificación</label>
+        <input id="identificacion-empleado" type="number" formControlName="identificacion_empleado">
+        <label for="nombre-empleado">Nombre</label>
+        <input id="nombre-empleado" type="text" formControlName="nombre_empleado">
+        <label for="primer-apellido-empleado">Primer apellido</label>
+        <input id="primer-apellido-empleado" type="text" formControlName="primer_apellido_empleado">
+        <label for="segundo-apellido-empleado">Segundo apellido</label>
+        <input id="segundo-apellido-empleado" type="text" formControlName="segundo_apellido_empleado">
+        <label for="correo-empleado">Correo</label>
+        <input id="correo-empleado" type="email" formControlName="correo_empleado">
+        <label for="telefono-empleado">Teléfono</label>
+        <input id="telefono-empleado" type="text" formControlName="telefono_empleado">
+        <label for="direccion-empleado">Dirección</label>
+        <input id="direccion-empleado" type="text" formControlName="direccion_empleado">
+        <label for="password-empleado">Contraseña {{ editandoId() ? '(opcional al editar)' : '' }}</label>
+        <input id="password-empleado" type="password" formControlName="password" autocomplete="new-password">
+        <label for="perfil-empleado">Código del perfil</label>
+        <input id="perfil-empleado" type="number" formControlName="codigo_perfil_empleado">
+        <div>
+          <button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+          <button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button>
+        </div>
+      </form>
+    </section>
+  }
+
+  @if (cargando()) {
+    <section class="content-card empty-state">Cargando empleados...</section>
+  } @else {
+    <section class="content-card list-card">
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead><tr><th>Identificación</th><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+          <tbody>
+            @for (empleado of empleados(); track empleado.identificacion_empleado) {
+              <tr>
+                <td>{{ empleado.identificacion_empleado }}</td>
+                <td>{{ empleado.nombre_empleado }} {{ empleado.primer_apellido_empleado }} {{ empleado.segundo_apellido_empleado }}</td>
+                <td>{{ empleado.correo_empleado }}</td>
+                <td>{{ empleado.telefono_empleado || 'Sin teléfono' }}</td>
+                <td><button type="button" (click)="editar(empleado)">Editar</button> <button type="button" (click)="eliminar(empleado)">Eliminar</button></td>
+              </tr>
+            } @empty { <tr><td colspan="5">No hay empleados registrados.</td></tr> }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</main>

@@ -1,23 +1,45 @@
 <app-nav />
 
-<main>
-  <h1>Clientes</h1>
+<main class="page-main">
+  <header class="page-header">
+    <div><h1>Gestión de Clientes</h1><p>Consulta y administra los clientes del sistema.</p></div>
+    <button class="button button-primary" type="button" (click)="nuevo()">Nuevo cliente</button>
+  </header>
+
+  @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
+
+  @if (formularioVisible()) {
+    <section class="content-card">
+      <h2>{{ editandoId() ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
+      <form class="data-form" [formGroup]="form" (ngSubmit)="guardar()">
+        <label for="identificacion-cliente">Identificación</label><input id="identificacion-cliente" type="number" formControlName="identificacion_cliente">
+        <label for="nombre-cliente">Nombre</label><input id="nombre-cliente" type="text" formControlName="nombre_cliente">
+        <label for="primer-apellido-cliente">Primer apellido</label><input id="primer-apellido-cliente" type="text" formControlName="primer_apellido_cliente">
+        <label for="segundo-apellido-cliente">Segundo apellido</label><input id="segundo-apellido-cliente" type="text" formControlName="segundo_apellido_cliente">
+        <label for="correo-cliente">Correo</label><input id="correo-cliente" type="email" formControlName="correo_cliente">
+        <label for="telefono-cliente">Teléfono</label><input id="telefono-cliente" type="text" formControlName="telefono_cliente">
+        <label for="empleado-cliente">Empleado responsable</label><input id="empleado-cliente" type="number" formControlName="identificacion_empleado">
+        <label for="comentarios-cliente">Comentarios</label><textarea id="comentarios-cliente" rows="3" formControlName="comentarios"></textarea>
+        <div><button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button><button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button></div>
+      </form>
+    </section>
+  }
 
   @if (cargando()) {
-    <p>Cargando clientes...</p>
+    <section class="content-card empty-state"><p>Cargando clientes...</p></section>
   } @else if (error()) {
-    <p>{{ error() }}</p>
-    <button type="button" (click)="cargarClientes()">Reintentar</button>
+    <section class="content-card empty-state"><p>{{ error() }}</p><button class="button button-primary" type="button" (click)="cargarClientes()">Reintentar</button></section>
   } @else if (clientes().length === 0) {
-    <p>No hay clientes registrados.</p>
+    <section class="content-card empty-state"><p>No hay clientes registrados.</p></section>
   } @else {
-    <table>
+    <section class="content-card list-card"><div class="table-wrapper"><table class="data-table">
       <thead>
         <tr>
           <th>Identificación</th>
           <th>Nombre</th>
           <th>Correo</th>
           <th>Teléfono</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -27,9 +49,10 @@
             <td>{{ cliente.nombre_cliente }} {{ cliente.primer_apellido_cliente }}</td>
             <td>{{ cliente.correo_cliente || 'Sin correo' }}</td>
             <td>{{ cliente.telefono_cliente || 'Sin teléfono' }}</td>
+            <td><button type="button" (click)="editar(cliente)">Editar</button> <button type="button" (click)="eliminar(cliente)">Eliminar</button></td>
           </tr>
         }
       </tbody>
-    </table>
+    </table></div></section>
   }
 </main>

@@ -1,12 +1,37 @@
 from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 
-from .models import Cliente, Permiso, Perfil, Rol, Ruta
+from .models import Cliente, Empleado, Permiso, Perfil, Rol, Ruta
 
 
 class ClienteSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Cliente
 		fields = '__all__'
+
+
+class EmpleadoSerializer(serializers.ModelSerializer):
+	# La contraseña nunca se devuelve en las respuestas JSON.
+	password = serializers.CharField(write_only=True, required=False)
+
+	class Meta:
+		model = Empleado
+		fields = '__all__'
+
+	def create(self, validated_data):
+		# El hash evita guardar contraseñas legibles en PostgreSQL.
+		password = validated_data.get('password')
+		if not password:
+			raise serializers.ValidationError({'password': 'La contraseña es obligatoria al crear un empleado.'})
+		validated_data['password'] = make_password(password)
+		return super().create(validated_data)
+
+	def update(self, instance, validated_data):
+		# Si el usuario deja la contraseña vacía al editar, conservamos la actual.
+		password = validated_data.pop('password', None)
+		if password:
+			instance.password = make_password(password)
+		return super().update(instance, validated_data)
 
 
 class RolSerializer(serializers.ModelSerializer):

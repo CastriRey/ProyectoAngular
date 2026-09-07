@@ -12,4 +12,16 @@ export class ClientesService {
   obtenerClientes(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(this.apiUrl);
   }
+
+  crearCliente(cliente: Omit<Cliente, 'fecha_registro_cliente'>): Observable<Cliente> {
+    return this.http.post<Cliente>(this.apiUrl, cliente);
+  }
+
+  actualizarCliente(id: number, cliente: Partial<Cliente>): Observable<Cliente> {
+    return this.http.put<Cliente>(`${this.apiUrl}${id}/`, cliente);
+  }
+
+  eliminarCliente(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}${id}/`);
+  }
 }

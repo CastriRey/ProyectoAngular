@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Cliente, Empleado, Permiso, Perfil, Rol, Ruta
 from .serializers import (
 	ClienteSerializer,
+	EmpleadoSerializer,
 	PermisoSerializer,
 	PerfilSerializer,
 	RolSerializer,
@@ -63,6 +64,11 @@ def login_empleado(request):
 class ClienteViewSet(viewsets.ModelViewSet):
 	queryset = Cliente.objects.all().order_by('identificacion_cliente')
 	serializer_class = ClienteSerializer
+
+
+class EmpleadoViewSet(viewsets.ModelViewSet):
+	queryset = Empleado.objects.all().order_by('identificacion_empleado')
+	serializer_class = EmpleadoSerializer
 
 
 class RolViewSet(viewsets.ModelViewSet):

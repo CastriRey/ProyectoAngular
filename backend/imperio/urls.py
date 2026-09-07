@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
 	ClienteViewSet,
+	EmpleadoViewSet,
 	PermisoViewSet,
 	PerfilViewSet,
 	RolViewSet,
@@ -13,6 +14,7 @@ from .views import (
 
 router = DefaultRouter()
 router.register('clientes', ClienteViewSet, basename='cliente')
+router.register('empleados', EmpleadoViewSet, basename='empleado')
 router.register('roles', RolViewSet, basename='rol')
 router.register('perfiles', PerfilViewSet, basename='perfil')
 router.register('rutas', RutaViewSet, basename='ruta')

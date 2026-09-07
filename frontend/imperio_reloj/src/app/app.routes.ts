@@ -1,5 +1,6 @@
 import { Route, Routes } from '@angular/router';
 import { ClientesPage } from './clientes/clientes-page';
+import { EmpleadosPage } from './empleados/empleados-page';
 import { DashboardPage } from './dashboard/dashboard-page';
 import { LoginPage } from './login/login-page';
 import { authGuard } from './auth/auth.guard';
@@ -29,27 +30,13 @@ export const routes: Routes = [
 	// El guard impide acceder al dashboard sin un token guardado.
 	{ path: 'dashboard', component: DashboardPage, canActivate: [authGuard] },
 	{ path: 'clientes', component: ClientesPage, canActivate: [authGuard] },
-	modulo('empleados', 'Empleados', 'Administra los empleados del sistema.', {
-		tipo: 'lista', rutaLista: '/empleados', rutaNuevo: '/empleados/nuevo', columnas: ['Código', 'Nombre', 'Correo'],
-	}),
-	modulo('empleados/nuevo', 'Nuevo empleado', 'Registra un empleado del sistema.', {
-		tipo: 'formulario', rutaLista: '/empleados', rutaNuevo: null, columnas: [],
-	}),
-	modulo('empleados/:id/editar', 'Editar empleado', 'Actualiza la información del empleado.', {
-		tipo: 'formulario', rutaLista: '/empleados', rutaNuevo: null, columnas: [],
-	}),
-	modulo('empleados/:id/eliminar', 'Eliminar empleado', 'Confirma la eliminación del empleado.', {
-		tipo: 'confirmacion', rutaLista: '/empleados', rutaNuevo: null, columnas: [],
-	}),
-	modulo('clientes/nuevo', 'Nuevo cliente', 'Registra un cliente de la tienda.', {
-		tipo: 'formulario', rutaLista: '/clientes', rutaNuevo: null, columnas: [],
-	}),
-	modulo('clientes/:id/editar', 'Editar cliente', 'Actualiza la información del cliente.', {
-		tipo: 'formulario', rutaLista: '/clientes', rutaNuevo: null, columnas: [],
-	}),
-	modulo('clientes/:id/eliminar', 'Eliminar cliente', 'Confirma la eliminación del cliente.', {
-		tipo: 'confirmacion', rutaLista: '/clientes', rutaNuevo: null, columnas: [],
-	}),
+	{ path: 'empleados', component: EmpleadosPage, canActivate: [authGuard] },
+	{ path: 'empleados/nuevo', component: EmpleadosPage, canActivate: [authGuard] },
+	{ path: 'empleados/:id/editar', component: EmpleadosPage, canActivate: [authGuard] },
+	{ path: 'empleados/:id/eliminar', component: EmpleadosPage, canActivate: [authGuard] },
+	{ path: 'clientes/nuevo', component: ClientesPage, canActivate: [authGuard] },
+	{ path: 'clientes/:id/editar', component: ClientesPage, canActivate: [authGuard] },
+	{ path: 'clientes/:id/eliminar', component: ClientesPage, canActivate: [authGuard] },
 	modulo('relojes-clientes', 'Relojes de clientes', 'Administra los relojes registrados por los clientes.', {
 		tipo: 'lista', rutaLista: '/relojes-clientes', rutaNuevo: '/relojes-clientes/nuevo', columnas: ['Código', 'Cliente', 'Marca', 'Modelo'],
 	}),
