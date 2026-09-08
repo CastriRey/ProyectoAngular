@@ -5,6 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavComponent } from '../shared/nav/nav.component';
 import { Empleado } from './empleado';
 import { EmpleadosService } from './empleados.service';
+import { SecurityService } from '../seguridad/security.service';
+import { Perfil } from '../seguridad/security.types';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-empleados-page',
@@ -16,8 +19,10 @@ export class EmpleadosPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly securityService = inject(SecurityService);
 
   protected readonly empleados = signal<Empleado[]>([]);
+  protected readonly perfiles = signal<Perfil[]>([]);
   protected readonly cargando = signal(true);
   protected readonly guardando = signal(false);
   protected readonly formularioVisible = signal(false);
@@ -52,9 +57,10 @@ export class EmpleadosPage {
 
   protected cargarEmpleados(): void {
     this.cargando.set(true);
-    this.service.obtenerEmpleados().subscribe({
-      next: (empleados) => {
+    forkJoin({ empleados: this.service.obtenerEmpleados(), perfiles: this.securityService.perfiles() }).subscribe({
+      next: ({ empleados, perfiles }) => {
         this.empleados.set(empleados);
+        this.perfiles.set(perfiles);
         this.cargando.set(false);
         const id = this.editandoId();
         if (id !== null) {

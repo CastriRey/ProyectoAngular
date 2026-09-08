@@ -1,40 +1,40 @@
 <app-nav />
 
-<main>
-  <header>
+<main class="page-main">
+  <header class="page-header">
     <div>
       <h1>Gestión de Rutas</h1>
       <p>Administra las rutas y endpoints protegidos del sistema.</p>
     </div>
-    <button type="button" (click)="nuevo()">Nueva ruta</button>
+    <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-signpost-split" aria-hidden="true"></i> Nueva ruta</button>
   </header>
 
-  @if (error()) { <p role="alert">{{ error() }}</p> }
+  @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
 
   @if (formularioVisible()) {
-    <section>
+    <section class="content-card">
       <h2>{{ editandoId() ? 'Editar ruta' : 'Nueva ruta' }}</h2>
-      <form [formGroup]="form" (ngSubmit)="guardar()">
+      <form class="data-form" [formGroup]="form" (ngSubmit)="guardar()">
         <label for="nombre-ruta">Nombre</label><input id="nombre-ruta" type="text" formControlName="nombre_ruta">
         <label for="url-ruta">URL</label><input id="url-ruta" type="text" formControlName="url_ruta">
         <label for="nodo-ruta">Nodo</label><input id="nodo-ruta" type="text" maxlength="1" formControlName="nodo_ruta">
         <label for="padre-ruta">Ruta padre</label><input id="padre-ruta" type="number" formControlName="padre_ruta">
         <label for="orden-ruta">Orden</label><input id="orden-ruta" type="number" formControlName="orden_ruta">
-        <button type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
-        <button type="button" (click)="cancelar()">Cancelar</button>
+        <div><button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button></div>
       </form>
     </section>
   }
 
   <!-- El buscador es solo estructura; su comportamiento se agregará con Angular después. -->
-  <section aria-label="Buscar rutas">
+  <section class="security-search-card" aria-label="Buscar rutas">
     <label for="buscar-rutas">Buscar por nombre o URL</label>
     <input id="buscar-rutas" type="search" placeholder="Escribe un nombre o URL">
   </section>
 
-  <section aria-labelledby="rutas-title">
+  <section class="content-card list-card" aria-labelledby="rutas-title">
     <h2 id="rutas-title">Rutas registradas</h2>
-    <table>
+    <div class="table-wrapper"><table class="data-table">
       <thead>
         <tr>
           <th>Código</th>
@@ -45,9 +45,9 @@
       </thead>
       <tbody>
         @for (ruta of rutas(); track ruta.codigo_ruta) {
-          <tr><td>{{ ruta.codigo_ruta }}</td><td>{{ ruta.nombre_ruta }}</td><td>{{ ruta.url_ruta }}</td><td><button type="button" (click)="editar(ruta)">Editar</button> <button type="button" (click)="eliminar(ruta)">Eliminar</button></td></tr>
+          <tr><td>{{ ruta.codigo_ruta }}</td><td>{{ ruta.nombre_ruta }}</td><td>{{ ruta.url_ruta }}</td><td class="actions-cell"><button class="edit-action" type="button" (click)="editar(ruta)" aria-label="Editar ruta"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(ruta)" aria-label="Eliminar ruta"><i class="bi bi-trash" aria-hidden="true"></i></button></td></tr>
         } @empty { <tr><td colspan="4">No hay rutas registradas.</td></tr> }
       </tbody>
-    </table>
+    </table></div>
   </section>
 </main>

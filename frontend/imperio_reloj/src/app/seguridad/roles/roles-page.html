@@ -1,31 +1,31 @@
 <app-nav />
 
-<main>
-  <header>
+<main class="page-main">
+  <header class="page-header">
     <div>
       <h1>Gestión de Roles</h1>
       <p>Administra los roles del sistema.</p>
     </div>
-    <button type="button" (click)="nuevo()">Nuevo rol</button>
+    <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-person-gear" aria-hidden="true"></i> Nuevo rol</button>
   </header>
 
-  @if (error()) { <p role="alert">{{ error() }}</p> }
+  @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
 
   @if (formularioVisible()) {
-    <section>
+    <section class="content-card">
       <h2>{{ editandoId() ? 'Editar rol' : 'Nuevo rol' }}</h2>
-      <form [formGroup]="form" (ngSubmit)="guardar()">
+      <form class="data-form" [formGroup]="form" (ngSubmit)="guardar()">
         <label for="nombre-rol">Nombre del rol</label>
         <input id="nombre-rol" type="text" formControlName="nombre_rol">
-        <button type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
-        <button type="button" (click)="cancelar()">Cancelar</button>
+        <div><button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button></div>
       </form>
     </section>
   }
 
-  <section aria-labelledby="roles-title">
+  <section class="content-card list-card" aria-labelledby="roles-title">
     <h2 id="roles-title">Roles registrados</h2>
-    <table>
+    <div class="table-wrapper"><table class="data-table">
       <thead>
         <tr>
           <th>Código</th>
@@ -37,11 +37,11 @@
         @for (rol of roles(); track rol.codigo_rol) {
           <tr>
             <td>{{ rol.codigo_rol }}</td>
-            <td>{{ rol.nombre_rol }}</td>
-            <td><button type="button" (click)="editar(rol)">Editar</button> <button type="button" (click)="eliminar(rol)">Eliminar</button></td>
+            <td><strong>{{ rol.nombre_rol }}</strong></td>
+            <td class="actions-cell"><button class="edit-action" type="button" (click)="editar(rol)" aria-label="Editar rol"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(rol)" aria-label="Eliminar rol"><i class="bi bi-trash" aria-hidden="true"></i></button></td>
           </tr>
         } @empty { <tr><td colspan="3">No hay roles registrados.</td></tr> }
       </tbody>
-    </table>
+    </table></div>
   </section>
 </main>

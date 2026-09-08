@@ -8,6 +8,8 @@ import { PermisosPage } from './seguridad/permisos/permisos-page';
 import { PerfilesPage } from './seguridad/perfiles/perfiles-page';
 import { RolesPage } from './seguridad/roles/roles-page';
 import { RutasPage } from './seguridad/rutas/rutas-page';
+import { ProductosPage } from './productos/productos-page';
+import { CatalogPage } from './catalogos/catalog-page';
 import { ModulePage } from './shared/module-page/module-page';
 
 // Esta función evita repetir la configuración de todas las páginas del sistema.
@@ -21,6 +23,35 @@ const modulo = (
 	component: ModulePage,
 	canActivate: [authGuard],
 	data: { titulo, descripcion, ...data },
+});
+
+const catalogo = (
+	path: string,
+	recurso: 'marcas' | 'metodos-pago' | 'tipos-servicio' | 'estados-servicio',
+	titulo: string,
+	descripcion: string,
+	icono: string,
+	idKey: string,
+	nameKey: string,
+	nameLabel: string,
+): Route => ({
+	path,
+	component: CatalogPage,
+	canActivate: [authGuard],
+	data: {
+		catalogo: {
+			recurso,
+			titulo,
+			descripcion,
+			rutaLista: `/${path.split('/')[0]}`,
+			rutaNuevo: `/${path.split('/')[0]}/nuevo`,
+			icono,
+			idKey,
+			nameKey,
+			nameLabel,
+			placeholder: `Escribe el nombre de ${nameLabel.toLowerCase()}`,
+		},
+	},
 });
 
 export const routes: Routes = [
@@ -49,30 +80,14 @@ export const routes: Routes = [
 	modulo('relojes-clientes/:id/eliminar', 'Eliminar reloj de cliente', 'Confirma la eliminación del reloj.', {
 		tipo: 'confirmacion', rutaLista: '/relojes-clientes', rutaNuevo: null, columnas: [],
 	}),
-	modulo('productos', 'Productos', 'Administra el inventario de productos.', {
-		tipo: 'lista', rutaLista: '/productos', rutaNuevo: '/productos/nuevo', columnas: ['Código', 'Nombre', 'Precio', 'Stock'],
-	}),
-	modulo('productos/nuevo', 'Nuevo producto', 'Registra un producto en el inventario.', {
-		tipo: 'formulario', rutaLista: '/productos', rutaNuevo: null, columnas: [],
-	}),
-	modulo('productos/:id/editar', 'Editar producto', 'Actualiza la información del producto.', {
-		tipo: 'formulario', rutaLista: '/productos', rutaNuevo: null, columnas: [],
-	}),
-	modulo('productos/:id/eliminar', 'Eliminar producto', 'Confirma la eliminación del producto.', {
-		tipo: 'confirmacion', rutaLista: '/productos', rutaNuevo: null, columnas: [],
-	}),
-	modulo('marcas', 'Marcas', 'Administra las marcas de productos.', {
-		tipo: 'lista', rutaLista: '/marcas', rutaNuevo: '/marcas/nuevo', columnas: ['Código', 'Nombre'],
-	}),
-	modulo('marcas/nuevo', 'Nueva marca', 'Registra una marca.', {
-		tipo: 'formulario', rutaLista: '/marcas', rutaNuevo: null, columnas: [],
-	}),
-	modulo('marcas/:id/editar', 'Editar marca', 'Actualiza una marca.', {
-		tipo: 'formulario', rutaLista: '/marcas', rutaNuevo: null, columnas: [],
-	}),
-	modulo('marcas/:id/eliminar', 'Eliminar marca', 'Confirma la eliminación de la marca.', {
-		tipo: 'confirmacion', rutaLista: '/marcas', rutaNuevo: null, columnas: [],
-	}),
+	{ path: 'productos', component: ProductosPage, canActivate: [authGuard] },
+	{ path: 'productos/nuevo', component: ProductosPage, canActivate: [authGuard] },
+	{ path: 'productos/:id/editar', component: ProductosPage, canActivate: [authGuard] },
+	{ path: 'productos/:id/eliminar', component: ProductosPage, canActivate: [authGuard] },
+	catalogo('marcas', 'marcas', 'Marcas', 'Administra las marcas de productos.', 'bi-bookmark-star', 'codigo_marca', 'nombre_marca', 'Nombre'),
+	catalogo('marcas/nuevo', 'marcas', 'Marcas', 'Administra las marcas de productos.', 'bi-bookmark-star', 'codigo_marca', 'nombre_marca', 'Nombre'),
+	catalogo('marcas/:id/editar', 'marcas', 'Marcas', 'Administra las marcas de productos.', 'bi-bookmark-star', 'codigo_marca', 'nombre_marca', 'Nombre'),
+	catalogo('marcas/:id/eliminar', 'marcas', 'Marcas', 'Administra las marcas de productos.', 'bi-bookmark-star', 'codigo_marca', 'nombre_marca', 'Nombre'),
 	modulo('tipos-producto', 'Tipos de producto', 'Administra las categorías de productos.', {
 		tipo: 'lista', rutaLista: '/tipos-producto', rutaNuevo: '/tipos-producto/nuevo', columnas: ['Código', 'Nombre'],
 	}),
@@ -85,18 +100,10 @@ export const routes: Routes = [
 	modulo('tipos-producto/:id/eliminar', 'Eliminar tipo de producto', 'Confirma la eliminación de la categoría.', {
 		tipo: 'confirmacion', rutaLista: '/tipos-producto', rutaNuevo: null, columnas: [],
 	}),
-	modulo('metodos-pago', 'Métodos de pago', 'Administra las formas de pago.', {
-		tipo: 'lista', rutaLista: '/metodos-pago', rutaNuevo: '/metodos-pago/nuevo', columnas: ['Código', 'Nombre'],
-	}),
-	modulo('metodos-pago/nuevo', 'Nuevo método de pago', 'Registra una forma de pago.', {
-		tipo: 'formulario', rutaLista: '/metodos-pago', rutaNuevo: null, columnas: [],
-	}),
-	modulo('metodos-pago/:id/editar', 'Editar método de pago', 'Actualiza una forma de pago.', {
-		tipo: 'formulario', rutaLista: '/metodos-pago', rutaNuevo: null, columnas: [],
-	}),
-	modulo('metodos-pago/:id/eliminar', 'Eliminar método de pago', 'Confirma la eliminación de la forma de pago.', {
-		tipo: 'confirmacion', rutaLista: '/metodos-pago', rutaNuevo: null, columnas: [],
-	}),
+	catalogo('metodos-pago', 'metodos-pago', 'Métodos de pago', 'Administra las formas de pago.', 'bi-credit-card', 'codigo_metodo_pago', 'nombre_metodo_pago', 'Nombre'),
+	catalogo('metodos-pago/nuevo', 'metodos-pago', 'Métodos de pago', 'Administra las formas de pago.', 'bi-credit-card', 'codigo_metodo_pago', 'nombre_metodo_pago', 'Nombre'),
+	catalogo('metodos-pago/:id/editar', 'metodos-pago', 'Métodos de pago', 'Administra las formas de pago.', 'bi-credit-card', 'codigo_metodo_pago', 'nombre_metodo_pago', 'Nombre'),
+	catalogo('metodos-pago/:id/eliminar', 'metodos-pago', 'Métodos de pago', 'Administra las formas de pago.', 'bi-credit-card', 'codigo_metodo_pago', 'nombre_metodo_pago', 'Nombre'),
 	modulo('ventas', 'Ventas', 'Consulta las ventas registradas.', {
 		tipo: 'lista', rutaLista: '/ventas', rutaNuevo: '/ventas/nueva', columnas: ['Código', 'Cliente', 'Fecha', 'Total'],
 	}),
@@ -121,30 +128,14 @@ export const routes: Routes = [
 	modulo('servicios/:id/eliminar', 'Eliminar servicio', 'Confirma la eliminación del servicio.', {
 		tipo: 'confirmacion', rutaLista: '/servicios', rutaNuevo: null, columnas: [],
 	}),
-	modulo('tipos-servicio', 'Tipos de servicio', 'Administra los tipos de reparación disponibles.', {
-		tipo: 'lista', rutaLista: '/tipos-servicio', rutaNuevo: '/tipos-servicio/nuevo', columnas: ['Código', 'Nombre'],
-	}),
-	modulo('tipos-servicio/nuevo', 'Nuevo tipo de servicio', 'Registra un tipo de reparación.', {
-		tipo: 'formulario', rutaLista: '/tipos-servicio', rutaNuevo: null, columnas: [],
-	}),
-	modulo('tipos-servicio/:id/editar', 'Editar tipo de servicio', 'Actualiza un tipo de reparación.', {
-		tipo: 'formulario', rutaLista: '/tipos-servicio', rutaNuevo: null, columnas: [],
-	}),
-	modulo('tipos-servicio/:id/eliminar', 'Eliminar tipo de servicio', 'Confirma la eliminación del tipo de servicio.', {
-		tipo: 'confirmacion', rutaLista: '/tipos-servicio', rutaNuevo: null, columnas: [],
-	}),
-	modulo('estados-servicio', 'Estados de servicio', 'Administra los estados de las reparaciones.', {
-		tipo: 'lista', rutaLista: '/estados-servicio', rutaNuevo: '/estados-servicio/nuevo', columnas: ['Código', 'Estado'],
-	}),
-	modulo('estados-servicio/nuevo', 'Nuevo estado de servicio', 'Registra un estado para las reparaciones.', {
-		tipo: 'formulario', rutaLista: '/estados-servicio', rutaNuevo: null, columnas: [],
-	}),
-	modulo('estados-servicio/:id/editar', 'Editar estado de servicio', 'Actualiza un estado de reparación.', {
-		tipo: 'formulario', rutaLista: '/estados-servicio', rutaNuevo: null, columnas: [],
-	}),
-	modulo('estados-servicio/:id/eliminar', 'Eliminar estado de servicio', 'Confirma la eliminación del estado.', {
-		tipo: 'confirmacion', rutaLista: '/estados-servicio', rutaNuevo: null, columnas: [],
-	}),
+	catalogo('tipos-servicio', 'tipos-servicio', 'Tipos de servicio', 'Administra los tipos de reparación disponibles.', 'bi-tools', 'codigo_tipo_servicio', 'nombre_tipo_servicio', 'Nombre'),
+	catalogo('tipos-servicio/nuevo', 'tipos-servicio', 'Tipos de servicio', 'Administra los tipos de reparación disponibles.', 'bi-tools', 'codigo_tipo_servicio', 'nombre_tipo_servicio', 'Nombre'),
+	catalogo('tipos-servicio/:id/editar', 'tipos-servicio', 'Tipos de servicio', 'Administra los tipos de reparación disponibles.', 'bi-tools', 'codigo_tipo_servicio', 'nombre_tipo_servicio', 'Nombre'),
+	catalogo('tipos-servicio/:id/eliminar', 'tipos-servicio', 'Tipos de servicio', 'Administra los tipos de reparación disponibles.', 'bi-tools', 'codigo_tipo_servicio', 'nombre_tipo_servicio', 'Nombre'),
+	catalogo('estados-servicio', 'estados-servicio', 'Estados de servicio', 'Administra los estados de las reparaciones.', 'bi-clipboard-check', 'codigo_estado_servicio', 'nombre_estado_reparacion', 'Estado'),
+	catalogo('estados-servicio/nuevo', 'estados-servicio', 'Estados de servicio', 'Administra los estados de las reparaciones.', 'bi-clipboard-check', 'codigo_estado_servicio', 'nombre_estado_reparacion', 'Estado'),
+	catalogo('estados-servicio/:id/editar', 'estados-servicio', 'Estados de servicio', 'Administra los estados de las reparaciones.', 'bi-clipboard-check', 'codigo_estado_servicio', 'nombre_estado_reparacion', 'Estado'),
+	catalogo('estados-servicio/:id/eliminar', 'estados-servicio', 'Estados de servicio', 'Administra los estados de las reparaciones.', 'bi-clipboard-check', 'codigo_estado_servicio', 'nombre_estado_reparacion', 'Estado'),
 	// Las cuatro pantallas de seguridad usan componentes CRUD reales.
 	{ path: 'seguridad/roles', component: RolesPage, canActivate: [authGuard] },
 	{ path: 'seguridad/roles/nuevo', component: RolesPage, canActivate: [authGuard] },

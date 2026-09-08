@@ -26,6 +26,214 @@ app-dashboard-page {
 	color: #1f2937;
 }
 
+app-catalog-page {
+	display: block;
+	min-height: 100vh;
+	background: #f5f7fa;
+	color: #1f2937;
+}
+
+app-catalog-page main {
+	width: min(1440px, calc(100% - 48px));
+	margin: 0 auto;
+	padding: 42px 0 56px;
+}
+
+app-catalog-page main > header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	margin-bottom: 28px;
+}
+
+app-catalog-page h1 {
+	margin: 0 0 6px;
+	color: #1f2937;
+	font-size: clamp(1.7rem, 3vw, 2.25rem);
+	font-weight: 700;
+}
+
+app-catalog-page h1 i {
+	margin-right: 8px;
+	color: #2563eb;
+}
+
+app-catalog-page main > header p {
+	margin: 0;
+	color: #6b7280;
+}
+
+app-catalog-page main section {
+	margin-bottom: 24px;
+	padding: 24px;
+	border-radius: 16px;
+	background: #ffffff;
+	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+app-catalog-page h2 {
+	margin: 0 0 24px;
+	color: #172554;
+	font-size: 1.35rem;
+}
+
+app-catalog-page .catalog-form {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px 22px;
+}
+
+app-catalog-page .catalog-form label {
+	align-self: end;
+	margin: 0 0 -8px;
+	color: #334155;
+	font-size: 0.86rem;
+	font-weight: 700;
+}
+
+app-catalog-page .catalog-form input {
+	width: 100%;
+	box-sizing: border-box;
+	min-height: 46px;
+	padding: 11px 13px;
+	border: 1px solid #d7dee8;
+	border-radius: 10px;
+	outline: none;
+	background: #f8fafc;
+	color: #1e293b;
+	font: inherit;
+}
+
+app-catalog-page .catalog-form input:focus {
+	border-color: #2563eb;
+	background: #ffffff;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
+}
+
+app-catalog-page .catalog-form > div {
+	display: flex;
+	grid-column: 1 / -1;
+	gap: 10px;
+	margin-top: 6px;
+	padding-top: 18px;
+	border-top: 1px solid #eef2f7;
+}
+
+app-catalog-page .field-error {
+	grid-column: 2;
+	margin-top: -10px;
+	color: #b91c1c;
+}
+
+app-catalog-page .alert {
+	padding: 13px 16px;
+	border: 1px solid #fecaca;
+	border-radius: 10px;
+	background: #fff1f2;
+	color: #b91c1c;
+}
+
+app-catalog-page .catalog-search-card {
+	padding: 14px 16px;
+}
+
+app-catalog-page .catalog-search-box {
+	display: flex;
+	align-items: center;
+	min-height: 50px;
+	border: 1px solid #d9dee7;
+	border-radius: 10px;
+	overflow: hidden;
+	background: #ffffff;
+}
+
+app-catalog-page .catalog-search-icon {
+	display: inline-flex;
+	width: 48px;
+	min-height: 50px;
+	align-items: center;
+	justify-content: center;
+	background: #212529;
+	color: #ffffff;
+	font-size: 1.1rem;
+}
+
+app-catalog-page .catalog-search-box input {
+	width: 100%;
+	min-height: 50px;
+	padding: 0 14px;
+	border: 0;
+	outline: 0;
+	color: #4b5563;
+	font: inherit;
+}
+
+app-catalog-page .catalog-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.94rem;
+}
+
+app-catalog-page .catalog-table th {
+	padding: 14px 16px;
+	background: linear-gradient(135deg, #111827, #1f2937);
+	color: #ffffff;
+	font-weight: 600;
+	text-align: left;
+}
+
+app-catalog-page .catalog-table td {
+	padding: 14px 16px;
+	border-bottom: 1px solid #e5e7eb;
+	color: #4b5563;
+}
+
+app-catalog-page .catalog-table tbody tr:hover {
+	background: #f8fafc;
+}
+
+app-catalog-page .catalog-table td:first-child {
+	color: #111827;
+	font-weight: 700;
+}
+
+app-catalog-page .catalog-table .actions-column,
+app-catalog-page .catalog-table .actions-cell {
+	text-align: center;
+}
+
+app-catalog-page .catalog-table .actions-cell {
+	white-space: nowrap;
+}
+
+app-catalog-page .catalog-table .actions-cell button {
+	width: 30px;
+	min-height: 30px;
+	padding: 0;
+	border: 0;
+	border-radius: 4px;
+	font-size: 0.88rem;
+	cursor: pointer;
+}
+
+app-catalog-page .catalog-table .edit-action {
+	background: #ffc107;
+	color: #111827;
+}
+
+app-catalog-page .catalog-table .delete-action {
+	margin-left: 7px;
+	background: #dc3545;
+	color: #ffffff;
+}
+
+app-catalog-page .empty-state {
+	padding: 56px 24px;
+	color: #6b7280;
+	text-align: center;
+}
+
 app-module-page main,
 app-roles-page main,
 app-perfiles-page main,
@@ -321,14 +529,22 @@ app-module-page main section > a {
 /* Formularios CRUD de Clientes y Empleados. La cuadrícula evita que los
    campos se peguen horizontalmente como controles HTML nativos. */
 app-clientes-page .data-form,
-app-empleados-page .data-form {
+app-empleados-page .data-form,
+app-roles-page .data-form,
+app-perfiles-page .data-form,
+app-rutas-page .data-form,
+app-permisos-page .data-form {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 16px 22px;
 }
 
 app-clientes-page .data-form label,
-app-empleados-page .data-form label {
+app-empleados-page .data-form label,
+app-roles-page .data-form label,
+app-perfiles-page .data-form label,
+app-rutas-page .data-form label,
+app-permisos-page .data-form label {
 	align-self: end;
 	margin: 0 0 -8px;
 	color: #334155;
@@ -338,8 +554,204 @@ app-empleados-page .data-form label {
 
 app-clientes-page .data-form input,
 app-clientes-page .data-form textarea,
+app-clientes-page .data-form select,
 app-empleados-page .data-form input,
-app-empleados-page .data-form textarea {
+app-empleados-page .data-form textarea,
+app-empleados-page .data-form select {
+	width: 100%;
+	box-sizing: border-box;
+	min-height: 46px;
+	padding: 11px 13px;
+	border: 1px solid #d7dee8;
+	border-radius: 10px;
+	outline: none;
+	background: #f8fafc;
+	color: #1e293b;
+	font: inherit;
+}
+
+app-productos-page {
+	display: block;
+	min-height: 100vh;
+	background: #f5f7fa;
+	color: #1f2937;
+}
+
+app-productos-page h1 i {
+	margin-right: 8px;
+	color: #2563eb;
+}
+
+app-productos-page main {
+	width: min(1440px, calc(100% - 48px));
+	margin: 0 auto;
+	padding: 42px 0 56px;
+}
+
+app-productos-page main > header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	margin-bottom: 28px;
+}
+
+app-productos-page main > header p {
+	margin: 0;
+	color: #6b7280;
+}
+
+app-productos-page main section {
+	margin-bottom: 24px;
+	padding: 24px;
+	border-radius: 16px;
+	background: #ffffff;
+	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+app-productos-page h2 {
+	margin: 0 0 24px;
+	color: #172554;
+	font-size: 1.35rem;
+}
+
+app-productos-page .product-form {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px 22px;
+}
+
+app-productos-page .product-form label {
+	align-self: end;
+	margin: 0 0 -8px;
+	color: #334155;
+	font-size: 0.86rem;
+	font-weight: 700;
+}
+
+app-productos-page .product-form input,
+app-productos-page .product-form select,
+app-productos-page .product-form textarea {
+	width: 100%;
+	box-sizing: border-box;
+	min-height: 46px;
+	padding: 11px 13px;
+	border: 1px solid #d7dee8;
+	border-radius: 10px;
+	outline: none;
+	background: #f8fafc;
+	color: #1e293b;
+	font: inherit;
+}
+
+app-productos-page .product-form textarea {
+	resize: vertical;
+}
+
+app-productos-page .product-form input:focus,
+app-productos-page .product-form select:focus,
+app-productos-page .product-form textarea:focus {
+	border-color: #2563eb;
+	background: #ffffff;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
+}
+
+app-productos-page .product-form > div {
+	display: flex;
+	grid-column: 1 / -1;
+	gap: 10px;
+	margin-top: 6px;
+	padding-top: 18px;
+	border-top: 1px solid #eef2f7;
+}
+
+app-productos-page .product-search-card {
+	padding: 14px 16px;
+}
+
+app-productos-page .product-search-box {
+	display: flex;
+	align-items: center;
+	min-height: 50px;
+	border: 1px solid #d9dee7;
+	border-radius: 10px;
+	overflow: hidden;
+	background: #ffffff;
+}
+
+app-productos-page .product-search-icon {
+	display: inline-flex;
+	width: 48px;
+	min-height: 50px;
+	align-items: center;
+	justify-content: center;
+	background: #212529;
+	color: #ffffff;
+	font-size: 1.1rem;
+}
+
+app-productos-page .product-search-box input {
+	width: 100%;
+	min-height: 50px;
+	padding: 0 14px;
+	border: 0;
+	outline: 0;
+	color: #4b5563;
+	font: inherit;
+}
+
+app-productos-page .product-table {
+	min-width: 900px;
+}
+
+app-productos-page .product-table td:nth-child(2) strong,
+app-productos-page .product-table td:nth-child(2) small {
+	display: block;
+}
+
+app-productos-page .product-table td:nth-child(2) small {
+	margin-top: 4px;
+	color: #6b7280;
+	font-size: 0.82rem;
+}
+
+app-productos-page .product-table .actions-column,
+app-productos-page .product-table .actions-cell {
+	text-align: center;
+}
+
+app-productos-page .product-table .actions-cell {
+	white-space: nowrap;
+}
+
+app-productos-page .product-table .actions-cell button {
+	width: 30px;
+	min-height: 30px;
+	padding: 0;
+	border: 0;
+	border-radius: 4px;
+	font-size: 0.88rem;
+	cursor: pointer;
+}
+
+app-productos-page .product-table .edit-action {
+	background: #ffc107;
+	color: #111827;
+}
+
+app-productos-page .product-table .delete-action {
+	margin-left: 7px;
+	background: #dc3545;
+	color: #ffffff;
+}
+app-roles-page .data-form input,
+app-roles-page .data-form select,
+app-perfiles-page .data-form input,
+app-perfiles-page .data-form select,
+app-rutas-page .data-form input,
+app-rutas-page .data-form select,
+app-permisos-page .data-form input,
+app-permisos-page .data-form select {
 	width: 100%;
 	box-sizing: border-box;
 	min-height: 46px;
@@ -361,15 +773,29 @@ app-empleados-page .data-form textarea {
 
 app-clientes-page .data-form input:focus,
 app-clientes-page .data-form textarea:focus,
+app-clientes-page .data-form select:focus,
 app-empleados-page .data-form input:focus,
-app-empleados-page .data-form textarea:focus {
+app-empleados-page .data-form textarea:focus,
+app-empleados-page .data-form select:focus,
+app-roles-page .data-form input:focus,
+app-roles-page .data-form select:focus,
+app-perfiles-page .data-form input:focus,
+app-perfiles-page .data-form select:focus,
+app-rutas-page .data-form input:focus,
+app-rutas-page .data-form select:focus,
+app-permisos-page .data-form input:focus,
+app-permisos-page .data-form select:focus {
 	border-color: #2563eb;
 	background: #ffffff;
 	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
 }
 
 app-clientes-page .data-form > div,
-app-empleados-page .data-form > div {
+app-empleados-page .data-form > div,
+app-roles-page .data-form > div,
+app-perfiles-page .data-form > div,
+app-rutas-page .data-form > div,
+app-permisos-page .data-form > div {
 	display: flex;
 	grid-column: 1 / -1;
 	gap: 10px;
@@ -380,8 +806,16 @@ app-empleados-page .data-form > div {
 
 app-clientes-page .data-form button,
 app-empleados-page .data-form button,
+app-roles-page .data-form button,
+app-perfiles-page .data-form button,
+app-rutas-page .data-form button,
+app-permisos-page .data-form button,
 app-clientes-page .data-table button,
-app-empleados-page .data-table button {
+app-empleados-page .data-table button,
+app-roles-page .data-table button,
+app-perfiles-page .data-table button,
+app-rutas-page .data-table button,
+app-permisos-page .data-table button {
 	min-height: 40px;
 	padding: 9px 14px;
 	border: 0;
@@ -397,25 +831,45 @@ app-empleados-page .data-table button {
 
 app-clientes-page .data-form button:hover,
 app-empleados-page .data-form button:hover,
+app-roles-page .data-form button:hover,
+app-perfiles-page .data-form button:hover,
+app-rutas-page .data-form button:hover,
+app-permisos-page .data-form button:hover,
 app-clientes-page .data-table button:hover,
-app-empleados-page .data-table button:hover {
+app-empleados-page .data-table button:hover,
+app-roles-page .data-table button:hover,
+app-perfiles-page .data-table button:hover,
+app-rutas-page .data-table button:hover,
+app-permisos-page .data-table button:hover {
 	filter: brightness(0.93);
 	transform: translateY(-1px);
 }
 
 app-clientes-page .data-form button.button-secondary,
-app-empleados-page .data-form button.button-secondary {
+app-empleados-page .data-form button.button-secondary,
+app-roles-page .data-form button.button-secondary,
+app-perfiles-page .data-form button.button-secondary,
+app-rutas-page .data-form button.button-secondary,
+app-permisos-page .data-form button.button-secondary {
 	background: #64748b;
 }
 
 app-clientes-page .data-table button + button,
-app-empleados-page .data-table button + button {
+app-empleados-page .data-table button + button,
+app-roles-page .data-table button + button,
+app-perfiles-page .data-table button + button,
+app-rutas-page .data-table button + button,
+app-permisos-page .data-table button + button {
 	margin-left: 6px;
 	background: #dc2626;
 }
 
 app-clientes-page .alert,
-app-empleados-page .alert {
+app-empleados-page .alert,
+app-roles-page .alert,
+app-perfiles-page .alert,
+app-rutas-page .alert,
+app-permisos-page .alert {
 	padding: 13px 16px;
 	border: 1px solid #fecaca;
 	border-radius: 10px;
@@ -424,10 +878,84 @@ app-empleados-page .alert {
 }
 
 app-clientes-page .content-card > h2,
-app-empleados-page .content-card > h2 {
+app-empleados-page .content-card > h2,
+app-roles-page .content-card > h2,
+app-perfiles-page .content-card > h2,
+app-rutas-page .content-card > h2,
+app-permisos-page .content-card > h2 {
 	margin-bottom: 24px;
 	color: #172554;
 	font-size: 1.35rem;
+}
+
+app-roles-page .security-search-card,
+app-perfiles-page .security-search-card,
+app-rutas-page .security-search-card,
+app-permisos-page .security-search-card {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 14px 16px;
+}
+
+app-roles-page .security-search-card label,
+app-perfiles-page .security-search-card label,
+app-rutas-page .security-search-card label,
+app-permisos-page .security-search-card label {
+	margin: 0;
+	color: #334155;
+	font-size: 0.9rem;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+app-rutas-page .security-search-card input,
+app-permisos-page .security-search-card input {
+	width: 100%;
+	min-height: 46px;
+	padding: 11px 13px;
+	border: 1px solid #d7dee8;
+	border-radius: 10px;
+	outline: none;
+	background: #f8fafc;
+	color: #1e293b;
+	font: inherit;
+}
+
+app-roles-page .data-table .actions-cell,
+app-perfiles-page .data-table .actions-cell,
+app-rutas-page .data-table .actions-cell,
+app-permisos-page .data-table .actions-cell {
+	text-align: center;
+	white-space: nowrap;
+}
+
+app-roles-page .data-table .actions-cell button,
+app-perfiles-page .data-table .actions-cell button,
+app-rutas-page .data-table .actions-cell button,
+app-permisos-page .data-table .actions-cell button {
+	width: 30px;
+	min-height: 30px;
+	padding: 0;
+	border-radius: 4px;
+	font-size: 0.88rem;
+}
+
+app-roles-page .data-table .edit-action,
+app-perfiles-page .data-table .edit-action,
+app-rutas-page .data-table .edit-action,
+app-permisos-page .data-table .edit-action {
+	background: #ffc107;
+	color: #111827;
+}
+
+app-roles-page .data-table .delete-action,
+app-perfiles-page .data-table .delete-action,
+app-rutas-page .data-table .delete-action,
+app-permisos-page .data-table .delete-action {
+	margin-left: 7px;
+	background: #dc3545;
+	color: #ffffff;
 }
 
 /* Ajustes visuales de la lista de empleados según empleados_list.html original. */
@@ -654,12 +1182,67 @@ app-empleados-page tbody tr:hover {
 
 @media (max-width: 760px) {
 	app-clientes-page .data-form,
-	app-empleados-page .data-form {
+	app-empleados-page .data-form,
+	app-productos-page .product-form,
+	app-roles-page .data-form,
+	app-perfiles-page .data-form,
+	app-rutas-page .data-form,
+	app-permisos-page .data-form {
 		grid-template-columns: 1fr;
 	}
 
+	app-catalog-page main {
+		width: min(100% - 28px, 620px);
+		padding-top: 28px;
+	}
+
+	app-productos-page main {
+		width: min(100% - 28px, 620px);
+		padding-top: 28px;
+	}
+
+	app-productos-page main > header {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	app-productos-page main section {
+		padding: 16px;
+	}
+
+	app-catalog-page main > header {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	app-catalog-page main section {
+		padding: 16px;
+	}
+
+	app-catalog-page .catalog-form {
+		grid-template-columns: 1fr;
+	}
+
+	app-catalog-page .catalog-form > div,
+	app-catalog-page .field-error {
+		grid-column: auto;
+	}
+
+	app-catalog-page .table-wrapper {
+		overflow-x: auto;
+	}
+
+	app-catalog-page .catalog-table {
+		min-width: 620px;
+	}
+
 	app-clientes-page .data-form > div,
-	app-empleados-page .data-form > div {
+	app-empleados-page .data-form > div,
+	app-productos-page .product-form > div,
+	app-roles-page .data-form > div,
+	app-perfiles-page .data-form > div,
+	app-rutas-page .data-form > div,
+	app-permisos-page .data-form > div {
 		grid-column: auto;
 	}
 
@@ -704,6 +1287,14 @@ app-empleados-page tbody tr:hover {
 	app-module-page main section > div:first-child,
 	app-rutas-page main section[aria-label],
 	app-permisos-page main section[aria-label] {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	app-roles-page .security-search-card,
+	app-perfiles-page .security-search-card,
+	app-rutas-page .security-search-card,
+	app-permisos-page .security-search-card {
 		align-items: stretch;
 		flex-direction: column;
 	}

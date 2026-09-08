@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Cliente, Empleado, Permiso, Perfil, Rol, Ruta
+from .models import Cliente, Empleado, EstadoServicio, Marca, MetodoPago, Permiso, Perfil, Producto, Rol, Ruta, TipoProducto, TipoServicio
 from .serializers import (
 	ClienteSerializer,
 	EmpleadoSerializer,
@@ -13,6 +13,12 @@ from .serializers import (
 	PerfilSerializer,
 	RolSerializer,
 	RutaSerializer,
+	EstadoServicioSerializer,
+	MarcaSerializer,
+	MetodoPagoSerializer,
+	ProductoSerializer,
+	TipoProductoSerializer,
+	TipoServicioSerializer,
 )
 
 
@@ -89,3 +95,33 @@ class RutaViewSet(viewsets.ModelViewSet):
 class PermisoViewSet(viewsets.ModelViewSet):
 	queryset = Permiso.objects.all().order_by('codigo_perfil_permiso', 'codigo_ruta_permiso')
 	serializer_class = PermisoSerializer
+
+
+class MarcaViewSet(viewsets.ModelViewSet):
+	queryset = Marca.objects.all().order_by('codigo_marca')
+	serializer_class = MarcaSerializer
+
+
+class MetodoPagoViewSet(viewsets.ModelViewSet):
+	queryset = MetodoPago.objects.all().order_by('codigo_metodo_pago')
+	serializer_class = MetodoPagoSerializer
+
+
+class TipoServicioViewSet(viewsets.ModelViewSet):
+	queryset = TipoServicio.objects.all().order_by('codigo_tipo_servicio')
+	serializer_class = TipoServicioSerializer
+
+
+class EstadoServicioViewSet(viewsets.ModelViewSet):
+	queryset = EstadoServicio.objects.all().order_by('codigo_estado_servicio')
+	serializer_class = EstadoServicioSerializer
+
+
+class TipoProductoViewSet(viewsets.ModelViewSet):
+	queryset = TipoProducto.objects.all().order_by('codigo_tipo_producto')
+	serializer_class = TipoProductoSerializer
+
+
+class ProductoViewSet(viewsets.ModelViewSet):
+	queryset = Producto.objects.all().order_by('codigo_producto')
+	serializer_class = ProductoSerializer

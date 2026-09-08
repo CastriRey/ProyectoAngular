@@ -31,8 +31,8 @@
         <input id="direccion-empleado" type="text" formControlName="direccion_empleado">
         <label for="password-empleado">Contraseña {{ editandoId() ? '(opcional al editar)' : '' }}</label>
         <input id="password-empleado" type="password" formControlName="password" autocomplete="new-password">
-        <label for="perfil-empleado">Código del perfil</label>
-        <input id="perfil-empleado" type="number" formControlName="codigo_perfil_empleado">
+        <label for="perfil-empleado">Perfil</label>
+        <select id="perfil-empleado" formControlName="codigo_perfil_empleado"><option [ngValue]="0">Selecciona un perfil</option>@for (perfil of perfiles(); track perfil.codigo_perfil) { <option [ngValue]="perfil.codigo_perfil">{{ perfil.nombre_perfil }}</option> }</select>
         <div>
           <button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
           <button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button>

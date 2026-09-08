@@ -18,7 +18,7 @@
         <label for="segundo-apellido-cliente">Segundo apellido</label><input id="segundo-apellido-cliente" type="text" formControlName="segundo_apellido_cliente">
         <label for="correo-cliente">Correo</label><input id="correo-cliente" type="email" formControlName="correo_cliente">
         <label for="telefono-cliente">Teléfono</label><input id="telefono-cliente" type="text" formControlName="telefono_cliente">
-        <label for="empleado-cliente">Empleado responsable</label><input id="empleado-cliente" type="number" formControlName="identificacion_empleado">
+        <label for="empleado-cliente">Empleado responsable</label><select id="empleado-cliente" formControlName="identificacion_empleado"><option [ngValue]="0">Selecciona un empleado</option>@for (empleado of empleados(); track empleado.identificacion_empleado) { <option [ngValue]="empleado.identificacion_empleado">{{ empleado.nombre_empleado }} {{ empleado.primer_apellido_empleado }} ({{ empleado.identificacion_empleado }})</option> }</select>
         <label for="comentarios-cliente">Comentarios</label><textarea id="comentarios-cliente" rows="3" formControlName="comentarios"></textarea>
         <div><button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button><button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button></div>
       </form>
@@ -47,7 +47,7 @@
             <td>{{ cliente.identificacion_cliente }}</td>
             <td><strong>{{ cliente.nombre_cliente }} {{ cliente.primer_apellido_cliente }}</strong><small>{{ cliente.segundo_apellido_cliente }}</small></td>
             <td><span><i class="bi bi-envelope" aria-hidden="true"></i> {{ cliente.correo_cliente || 'Sin correo' }}</span><span><i class="bi bi-telephone" aria-hidden="true"></i> {{ cliente.telefono_cliente || 'Sin teléfono' }}</span></td>
-            <td><span class="profile-cell"><i class="bi bi-person-badge" aria-hidden="true"></i> {{ cliente.identificacion_empleado }}</span></td>
+            <td><span class="profile-cell"><i class="bi bi-person-badge" aria-hidden="true"></i> {{ nombreEmpleado(cliente.identificacion_empleado) }}</span></td>
             <td class="actions-cell"><button class="watch-action" type="button" routerLink="/relojes-clientes" aria-label="Ver relojes del cliente"><i class="bi bi-watch" aria-hidden="true"></i></button><button class="edit-action" type="button" (click)="editar(cliente)" aria-label="Editar cliente"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(cliente)" aria-label="Eliminar cliente"><i class="bi bi-trash" aria-hidden="true"></i></button></td>
           </tr>
         }

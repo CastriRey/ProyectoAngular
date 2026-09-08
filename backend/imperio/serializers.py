@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 
-from .models import Cliente, Empleado, Permiso, Perfil, Rol, Ruta
+from .models import Cliente, Empleado, EstadoServicio, Marca, MetodoPago, Permiso, Perfil, Producto, Rol, Ruta, TipoProducto, TipoServicio
 
 
 class ClienteSerializer(serializers.ModelSerializer):
@@ -62,3 +62,51 @@ class PermisoSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Permiso
 		fields = '__all__'
+
+
+class MarcaSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Marca
+		fields = '__all__'
+
+
+class MetodoPagoSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = MetodoPago
+		fields = '__all__'
+
+
+class TipoServicioSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = TipoServicio
+		fields = '__all__'
+
+
+class EstadoServicioSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = EstadoServicio
+		fields = '__all__'
+
+
+class TipoProductoSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = TipoProducto
+		fields = '__all__'
+
+
+class ProductoSerializer(serializers.ModelSerializer):
+	marca_nombre = serializers.SerializerMethodField()
+	tipo_producto_nombre = serializers.SerializerMethodField()
+
+	class Meta:
+		model = Producto
+		fields = '__all__'
+		read_only_fields = ('marca_nombre', 'tipo_producto_nombre')
+
+	def get_marca_nombre(self, producto):
+		marca = Marca.objects.filter(codigo_marca=producto.codigo_marca).first()
+		return marca.nombre_marca if marca else f'Marca {producto.codigo_marca}'
+
+	def get_tipo_producto_nombre(self, producto):
+		tipo = TipoProducto.objects.filter(codigo_tipo_producto=producto.codigo_tipo_producto).first()
+		return tipo.nombre_tipo_producto if tipo else f'Tipo {producto.codigo_tipo_producto}'

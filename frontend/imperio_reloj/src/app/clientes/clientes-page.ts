@@ -5,6 +5,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Cliente } from './cliente';
 import { ClientesService } from './clientes.service';
 import { NavComponent } from '../shared/nav/nav.component';
+import { Empleado } from '../empleados/empleado';
+import { EmpleadosService } from '../empleados/empleados.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-clientes-page',
@@ -16,8 +19,10 @@ export class ClientesPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly empleadosService = inject(EmpleadosService);
 
   protected readonly clientes = signal<Cliente[]>([]);
+  protected readonly empleados = signal<Empleado[]>([]);
   protected readonly cargando = signal(true);
   protected readonly error = signal('');
   protected readonly busqueda = signal('');
@@ -53,9 +58,10 @@ export class ClientesPage {
     this.cargando.set(true);
     this.error.set('');
 
-    this.clientesService.obtenerClientes().subscribe({
-      next: (clientes) => {
+    forkJoin({ clientes: this.clientesService.obtenerClientes(), empleados: this.empleadosService.obtenerEmpleados() }).subscribe({
+      next: ({ clientes, empleados }) => {
         this.clientes.set(clientes);
+        this.empleados.set(empleados);
         this.cargando.set(false);
         const id = this.editandoId();
         if (id !== null) {
@@ -73,6 +79,11 @@ export class ClientesPage {
 
   protected actualizarBusqueda(event: Event): void {
     this.busqueda.set((event.target as HTMLInputElement).value);
+  }
+
+  protected nombreEmpleado(id: number): string {
+    const empleado = this.empleados().find((item) => item.identificacion_empleado === id);
+    return empleado ? `${empleado.nombre_empleado} ${empleado.primer_apellido_empleado}` : `Empleado ${id}`;
   }
 
   protected nuevo(): void {

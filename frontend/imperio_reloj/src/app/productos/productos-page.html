@@ -1,0 +1,42 @@
+<app-nav />
+
+<main class="page-main">
+  <header class="page-header">
+    <div><h1><i class="bi bi-box-seam" aria-hidden="true"></i> Gestión de Productos</h1><p>Administra el inventario y sus relaciones.</p></div>
+    <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-plus-circle" aria-hidden="true"></i> Nuevo producto</button>
+  </header>
+
+  @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
+
+  @if (formularioVisible()) {
+    <section class="content-card">
+      <h2>{{ editandoId() ? 'Editar producto' : 'Nuevo producto' }}</h2>
+      <form class="data-form product-form" [formGroup]="form" (ngSubmit)="guardar()">
+        <label for="nombre-producto">Nombre</label><input id="nombre-producto" type="text" formControlName="nombre_producto">
+        <label for="modelo-producto">Modelo</label><input id="modelo-producto" type="text" formControlName="modelo_producto">
+        <label for="marca-producto">Marca</label>
+        <select id="marca-producto" formControlName="codigo_marca"><option [ngValue]="0">Selecciona una marca</option>@for (marca of marcas(); track marca.codigo_marca) { <option [ngValue]="marca.codigo_marca">{{ marca.nombre_marca }}</option> }</select>
+        <label for="tipo-producto">Tipo de producto</label>
+        <select id="tipo-producto" formControlName="codigo_tipo_producto"><option [ngValue]="0">Selecciona un tipo</option>@for (tipo of tiposProducto(); track tipo.codigo_tipo_producto) { <option [ngValue]="tipo.codigo_tipo_producto">{{ tipo.nombre_tipo_producto }}</option> }</select>
+        <label for="costo-producto">Costo</label><input id="costo-producto" type="number" min="0" step="0.01" formControlName="costo_producto">
+        <label for="precio-producto">Precio de venta</label><input id="precio-producto" type="number" min="0" step="0.01" formControlName="precio_venta_producto">
+        <label for="garantia-producto">Garantía (meses)</label><input id="garantia-producto" type="number" min="0" formControlName="garantia_producto">
+        <label for="stock-producto">Stock disponible</label><input id="stock-producto" type="number" min="0" formControlName="stock_disponible_producto">
+        <label for="stock-minimo-producto">Stock mínimo</label><input id="stock-minimo-producto" type="number" min="0" formControlName="stock_minimo_producto">
+        <label for="control-stock">Controlar stock</label><select id="control-stock" formControlName="controla_stock"><option value="S">Sí</option><option value="N">No</option></select>
+        <label for="actualizacion-producto">Última actualización</label><input id="actualizacion-producto" type="datetime-local" formControlName="ultima_actualizacion_producto">
+        <label for="descripcion-producto">Descripción</label><textarea id="descripcion-producto" rows="3" formControlName="descripcion_producto"></textarea>
+        <div><button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button><button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button></div>
+      </form>
+    </section>
+  }
+
+  <section class="product-search-card"><div class="product-search-box"><span class="product-search-icon"><i class="bi bi-search" aria-hidden="true"></i></span><input type="search" placeholder="Buscar por código, nombre, marca o tipo..." [value]="busqueda()" (input)="actualizarBusqueda($event)"></div></section>
+
+  @if (cargando()) { <section class="content-card empty-state">Cargando productos...</section> } @else {
+    <section class="content-card list-card"><div class="table-wrapper"><table class="data-table product-table">
+      <thead><tr><th>Código</th><th>Producto</th><th>Marca</th><th>Tipo</th><th>Precio</th><th>Stock</th><th class="actions-column">Acciones</th></tr></thead>
+      <tbody>@for (producto of productosFiltrados(); track producto.codigo_producto) { <tr><td><strong>{{ producto.codigo_producto }}</strong></td><td><strong>{{ producto.nombre_producto }}</strong><small>{{ producto.modelo_producto || 'Sin modelo' }}</small></td><td>{{ producto.marca_nombre || producto.codigo_marca }}</td><td>{{ producto.tipo_producto_nombre || producto.codigo_tipo_producto }}</td><td>{{ producto.precio_venta_producto | number:'1.2-2' }}</td><td>{{ producto.stock_disponible_producto }}</td><td class="actions-cell"><button class="edit-action" type="button" (click)="editar(producto)" aria-label="Editar producto"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(producto)" aria-label="Eliminar producto"><i class="bi bi-trash" aria-hidden="true"></i></button></td></tr> } @empty { <tr><td colspan="7">No hay productos registrados.</td></tr> }</tbody>
+    </table></div></section>
+  }
+</main>

@@ -1,20 +1,20 @@
 <app-nav />
 
-<main>
-  <header>
+<main class="page-main">
+  <header class="page-header">
     <div>
       <h1>Gestión de Permisos</h1>
       <p>Administra los accesos y privilegios del sistema.</p>
     </div>
-    <button type="button" (click)="nuevo()">Nuevo permiso</button>
+    <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-key" aria-hidden="true"></i> Nuevo permiso</button>
   </header>
 
-  @if (error()) { <p role="alert">{{ error() }}</p> }
+  @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
 
   @if (formularioVisible()) {
-    <section>
+    <section class="content-card">
       <h2>{{ editandoId() ? 'Editar permiso' : 'Nuevo permiso' }}</h2>
-      <form [formGroup]="form" (ngSubmit)="guardar()">
+      <form class="data-form permission-form" [formGroup]="form" (ngSubmit)="guardar()">
         <label for="perfil-permiso">Perfil</label>
         <select id="perfil-permiso" formControlName="codigo_perfil_permiso"><option [ngValue]="0">Selecciona un perfil</option>@for (perfil of perfiles(); track perfil.codigo_perfil) { <option [ngValue]="perfil.codigo_perfil">{{ perfil.nombre_perfil }}</option> }</select>
         <label for="ruta-permiso">Ruta</label>
@@ -23,22 +23,22 @@
         <label>Insertar <select formControlName="insertar"><option value="S">Sí</option><option value="N">No</option></select></label>
         <label>Modificar <select formControlName="modificar"><option value="S">Sí</option><option value="N">No</option></select></label>
         <label>Eliminar <select formControlName="eliminar"><option value="S">Sí</option><option value="N">No</option></select></label>
-        <button type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
-        <button type="button" (click)="cancelar()">Cancelar</button>
+        <div><button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button></div>
       </form>
     </section>
   }
 
   <!-- El filtro queda preparado para conectarlo a una signal en el siguiente paso. -->
-  <section aria-label="Buscar permisos">
+  <section class="security-search-card" aria-label="Buscar permisos">
     <label for="buscar-permisos">Buscar por perfil o ruta</label>
     <input id="buscar-permisos" type="search" placeholder="Escribe un perfil o ruta">
   </section>
 
   <!-- Cada fila representará la matriz CRUD de un perfil sobre una ruta. -->
-  <section aria-labelledby="permisos-title">
+  <section class="content-card list-card" aria-labelledby="permisos-title">
     <h2 id="permisos-title">Permisos registrados</h2>
-    <table>
+    <div class="table-wrapper"><table class="data-table">
       <thead>
         <tr>
           <th>Perfil</th>
@@ -52,9 +52,9 @@
       </thead>
       <tbody>
         @for (permiso of permisos(); track permiso.id) {
-          <tr><td>{{ permiso.codigo_perfil_permiso }}</td><td>{{ permiso.codigo_ruta_permiso }}</td><td>{{ permiso.consultar }}</td><td>{{ permiso.insertar }}</td><td>{{ permiso.modificar }}</td><td>{{ permiso.eliminar }}</td><td><button type="button" (click)="editar(permiso)">Editar</button> <button type="button" (click)="eliminar(permiso)">Eliminar</button></td></tr>
+          <tr><td>{{ permiso.codigo_perfil_permiso }}</td><td>{{ permiso.codigo_ruta_permiso }}</td><td>{{ permiso.consultar }}</td><td>{{ permiso.insertar }}</td><td>{{ permiso.modificar }}</td><td>{{ permiso.eliminar }}</td><td class="actions-cell"><button class="edit-action" type="button" (click)="editar(permiso)" aria-label="Editar permiso"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(permiso)" aria-label="Eliminar permiso"><i class="bi bi-trash" aria-hidden="true"></i></button></td></tr>
         } @empty { <tr><td colspan="7">No hay permisos registrados.</td></tr> }
       </tbody>
-    </table>
+    </table></div>
   </section>
 </main>
