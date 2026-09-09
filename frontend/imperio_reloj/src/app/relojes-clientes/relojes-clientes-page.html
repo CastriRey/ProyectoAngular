@@ -1,0 +1,23 @@
+<app-nav />
+
+<main class="page-main relojes-clientes-page">
+  @if (formularioVisible()) {
+    @if (clienteSeleccionado()) {
+      <section class="reloj-client-info"><div><h2><i class="bi bi-person-circle" aria-hidden="true"></i> {{ clienteSeleccionado()!.nombre_cliente }} {{ clienteSeleccionado()!.primer_apellido_cliente }} {{ clienteSeleccionado()!.segundo_apellido_cliente || '' }}</h2><p><i class="bi bi-card-text" aria-hidden="true"></i> Cédula: {{ clienteSeleccionado()!.identificacion_cliente }}</p></div><small>Cliente registrado</small></section>
+    }
+    <header class="page-header"><div><h1>{{ editandoId() ? 'Editar Reloj' : 'Nuevo Reloj' }}</h1><p>Registra la información del reloj.</p></div><button class="button button-secondary" type="button" (click)="cancelar()"><i class="bi bi-arrow-left" aria-hidden="true"></i> Volver</button></header>
+    @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
+    <section class="content-card reloj-form-card"><form class="data-form reloj-form" [formGroup]="form" (ngSubmit)="guardar()">
+      <label for="cliente-reloj">Cliente</label><select id="cliente-reloj" formControlName="codigo_cliente" (change)="actualizarClienteSeleccionado()"><option [ngValue]="0">Selecciona un cliente</option>@for (cliente of clientes(); track cliente.identificacion_cliente) { <option [ngValue]="cliente.identificacion_cliente">{{ cliente.identificacion_cliente }} - {{ cliente.nombre_cliente }} {{ cliente.primer_apellido_cliente }}</option> }</select>
+      <label for="marca-reloj">Marca</label><select id="marca-reloj" formControlName="codigo_marca"><option [ngValue]="0">Selecciona una marca</option>@for (marca of marcas(); track marca.codigo_marca) { <option [ngValue]="marca.codigo_marca">{{ marca.codigo_marca }} - {{ marca.nombre_marca }}</option> }</select>
+      <label for="modelo-reloj">Modelo</label><input id="modelo-reloj" type="text" formControlName="modelo" placeholder="Escribe el modelo">
+      <label for="descripcion-reloj">Descripción del reloj</label><textarea id="descripcion-reloj" rows="4" formControlName="descripcion_reloj" placeholder="Describe el reloj"></textarea>
+      <div><button class="button button-primary" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button><button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button></div>
+    </form></section>
+  } @else {
+    <header class="page-header"><div><h1><i class="bi bi-watch" aria-hidden="true"></i> Relojes de Clientes</h1><p>Administra los relojes registrados para tus clientes.</p></div><button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-watch" aria-hidden="true"></i> Nuevo reloj</button></header>
+    @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
+    <section class="relojes-search-card"><div class="relojes-search-box"><span class="relojes-search-icon"><i class="bi bi-search" aria-hidden="true"></i></span><input type="search" placeholder="Buscar reloj por marca, modelo o cliente..." [value]="busqueda()" (input)="actualizarBusqueda($event)"></div></section>
+    @if (cargando()) { <section class="content-card empty-state">Cargando relojes...</section> } @else { <section class="content-card list-card"><div class="table-wrapper"><table class="data-table relojes-table"><thead><tr><th>ID</th><th>Cliente</th><th>Marca</th><th>Modelo</th><th>Descripción</th><th class="actions-column">Acciones</th></tr></thead><tbody>@for (reloj of relojesFiltrados(); track reloj.codigo_reloj_cliente) { <tr><td><strong>{{ reloj.codigo_reloj_cliente }}</strong></td><td>{{ reloj.cliente_nombre || reloj.codigo_cliente }}</td><td>{{ reloj.marca_nombre || reloj.codigo_marca }}</td><td><strong>{{ reloj.modelo || 'Sin modelo' }}</strong></td><td class="reloj-description">{{ reloj.descripcion_reloj || 'Sin descripción' }}</td><td class="actions-cell"><button class="edit-action" type="button" (click)="editar(reloj)" aria-label="Editar reloj"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(reloj)" aria-label="Eliminar reloj"><i class="bi bi-trash" aria-hidden="true"></i></button></td></tr> } @empty { <tr><td colspan="6">No hay relojes registrados.</td></tr> }</tbody></table></div></section> }
+  }
+</main>

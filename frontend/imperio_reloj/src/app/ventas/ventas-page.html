@@ -1,0 +1,73 @@
+<app-nav />
+
+<main class="page-main sales-page">
+  <header class="page-header">
+    <div><h1><i class="bi bi-receipt" aria-hidden="true"></i> {{ formularioVisible() ? 'Nueva Venta' : 'Gestión de Ventas' }}</h1><p>{{ formularioVisible() ? 'Crea una nueva venta completando todos los campos.' : 'Visualiza todas las ventas realizadas.' }}</p></div>
+    @if (!formularioVisible() && !ventaSeleccionada()) { <button class="button button-success" type="button" (click)="nueva()"><i class="bi bi-plus-circle" aria-hidden="true"></i> Nueva venta</button> }
+  </header>
+
+  @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
+
+  @if (formularioVisible()) {
+    <section class="factura-container">
+      <form class="sales-form" [formGroup]="form" (ngSubmit)="guardar()">
+        <section class="legacy-sales-card">
+          <div class="legacy-section-header"><i class="bi bi-person" aria-hidden="true"></i> 1. Identificar Cliente</div>
+          <div class="legacy-section-body">
+            <label for="cliente-venta">Identificación del Cliente *</label><select id="cliente-venta" formControlName="identificacion_cliente_venta"><option [ngValue]="0">Selecciona un cliente</option>@for (cliente of clientes(); track cliente.identificacion_cliente) { <option [ngValue]="cliente.identificacion_cliente">{{ cliente.identificacion_cliente }} - {{ cliente.nombre_cliente }} {{ cliente.primer_apellido_cliente }}</option> }</select>
+            <small>Selecciona el cliente registrado para la venta.</small>
+            @if (form.controls.identificacion_cliente_venta.value > 0) { @for (cliente of clientes(); track cliente.identificacion_cliente) { @if (cliente.identificacion_cliente === form.controls.identificacion_cliente_venta.value) { <div class="cliente-info activo"><strong>Nombre:</strong> {{ cliente.nombre_cliente }} {{ cliente.primer_apellido_cliente }} <span><strong>Email:</strong> {{ cliente.correo_cliente || 'N/A' }}</span><span><strong>Teléfono:</strong> {{ cliente.telefono_cliente || 'N/A' }}</span></div> } } }
+          </div>
+        </section>
+
+        <section class="legacy-sales-card">
+          <div class="legacy-section-header"><i class="bi bi-tools" aria-hidden="true"></i> 2. Servicios Relacionados (Finalizados)</div>
+          <div class="legacy-section-body"><p class="legacy-muted">Selecciona los servicios finalizados que deseas agregar a esta venta.</p><p class="legacy-muted">No hay servicios finalizados disponibles para asociar.</p></div>
+        </section>
+
+        <section class="legacy-sales-card">
+          <div class="legacy-section-header"><i class="bi bi-box-seam" aria-hidden="true"></i> 3. Agregar Productos</div>
+          <div class="legacy-section-body">
+            <label for="producto-venta">Buscar Producto (por código o nombre) *</label>
+            <select id="producto-venta" class="legacy-product-select" formControlName="codigo_producto"><option [ngValue]="0">Escribe o selecciona un producto...</option>@for (producto of productos(); track producto.codigo_producto) { <option [ngValue]="producto.codigo_producto">{{ producto.codigo_producto }} - {{ producto.nombre_producto }} | {{ producto.marca_nombre || 'Sin marca' }} | ${{ producto.precio_venta_producto | number:'1.2-2' }}</option> }</select>
+            <div class="legacy-product-add"><label for="cantidad-venta">Cantidad</label><input id="cantidad-venta" type="number" min="1" formControlName="cantidad_producto"><button class="button button-success" type="button" (click)="agregarProducto()"><i class="bi bi-cart-plus" aria-hidden="true"></i> Agregar producto</button></div>
+          </div>
+        </section>
+
+        <section class="legacy-sales-card sales-lines">
+          <div class="legacy-section-header"><i class="bi bi-receipt" aria-hidden="true"></i> 4. Resumen de la Factura</div>
+          <div class="legacy-section-body">
+          @if (lineas().length === 0) { <p class="empty-lines">Aún no has agregado productos.</p> } @else {
+            <div class="table-wrapper"><table class="data-table"><thead><tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr></thead><tbody>@for (linea of lineas(); track linea.codigo_producto) { <tr><td>{{ linea.nombre_producto }}</td><td>${{ linea.precio_unitario_producto | number:'1.2-2' }}</td><td>{{ linea.cantidad_producto }}</td><td>${{ linea.precio_unitario_producto * linea.cantidad_producto | number:'1.2-2' }}</td><td><button class="delete-action" type="button" (click)="quitarProducto(linea)" aria-label="Quitar producto"><i class="bi bi-trash" aria-hidden="true"></i></button></td></tr> }</tbody></table></div>
+          }
+          <div class="sales-total">Total: <strong>${{ total() | number:'1.2-2' }}</strong></div>
+          </div>
+        </section>
+        <section class="legacy-sales-card payment-card">
+          <div class="legacy-section-header"><i class="bi bi-credit-card" aria-hidden="true"></i> 5. Método de Pago</div>
+          <div class="legacy-section-body"><label for="metodo-venta">Selecciona el método de pago *</label><select id="metodo-venta" formControlName="codigo_metodo_pago"><option [ngValue]="0">Selecciona un método de pago</option>@for (metodo of metodosPago(); track metodo.codigo_metodo_pago) { <option [ngValue]="metodo.codigo_metodo_pago">{{ metodo.nombre_metodo_pago }}</option> }</select></div>
+        </section>
+        <div class="form-actions"><button class="button button-success" type="submit" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Completar venta' }}</button><button class="button button-secondary" type="button" (click)="cancelar()">Cancelar</button></div>
+      </form>
+    </section>
+  } @else if (ventaSeleccionada()) {
+    <section class="factura factura-view" id="factura">
+      <header class="factura-header">
+        <div><h2><i class="bi bi-receipt" aria-hidden="true"></i> FACTURA</h2><p>Venta #{{ ventaSeleccionada()!.codigo_venta }}</p></div>
+        <div class="factura-fecha"><strong>Fecha:</strong> {{ ventaSeleccionada()!.fecha_venta | date:'dd/MM/yyyy HH:mm' }}<br><strong>Imperio del Reloj</strong></div>
+      </header>
+      <div class="factura-info-grid">
+        <section class="factura-info-box"><h3>Cliente</h3><div><strong>Nombre</strong><span>{{ ventaSeleccionada()!.cliente_nombre }}</span></div><div><strong>ID</strong><span>{{ ventaSeleccionada()!.identificacion_cliente_venta }}</span></div><div><strong>Email</strong><span>{{ clienteDeVenta()?.correo_cliente || 'N/A' }}</span></div><div><strong>Teléfono</strong><span>{{ clienteDeVenta()?.telefono_cliente || 'N/A' }}</span></div></section>
+        <section class="factura-info-box"><h3>Información de Venta</h3><div><strong>Empleado</strong><span>{{ ventaSeleccionada()!.empleado_nombre }}</span></div><div><strong>Método de pago</strong><span>{{ ventaSeleccionada()!.metodo_pago_nombre }}</span></div></section>
+      </div>
+      <div class="factura-productos table-wrapper"><table><thead><tr><th>Código</th><th>Producto</th><th>Precio unitario</th><th class="numero">Cantidad</th><th class="numero">Subtotal</th></tr></thead><tbody>@for (detalle of ventaSeleccionada()!.detalles; track detalle.codigo_detalle_venta || detalle.codigo_producto) { <tr><td>{{ detalle.codigo_producto }}</td><td><strong>{{ detalle.producto_nombre }}</strong><small>{{ productoDeVenta(detalle.codigo_producto)?.marca_nombre || '' }} {{ productoDeVenta(detalle.codigo_producto)?.modelo_producto || '' }}</small></td><td>${{ detalle.precio_unitario_producto | number:'1.2-2' }}</td><td class="numero">{{ detalle.cantidad_producto }}</td><td class="numero"><strong>${{ detalle.precio_unitario_producto * detalle.cantidad_producto | number:'1.2-2' }}</strong></td></tr> }</tbody></table></div>
+      <div class="factura-metodo"><span>Método de Pago</span><strong>{{ ventaSeleccionada()!.metodo_pago_nombre }}</strong></div>
+      <div class="factura-totales"><div><strong>Subtotal:</strong><span>${{ ventaSeleccionada()!.total_venta | number:'1.2-2' }}</span></div><div><strong>Impuestos (0%):</strong><span>$0.00</span></div><div class="factura-total-final"><strong>TOTAL:</strong><span>${{ ventaSeleccionada()!.total_venta | number:'1.2-2' }}</span></div></div>
+      <footer class="factura-footer"><p><i class="bi bi-check-circle" aria-hidden="true"></i> <strong>Venta Completada Exitosamente</strong></p><p>Gracias por tu compra en Imperio del Reloj</p></footer>
+    </section>
+    <div class="factura-actions"><button class="button button-primary" type="button" (click)="imprimirFactura()"><i class="bi bi-printer" aria-hidden="true"></i> Imprimir factura</button><button class="button button-success" type="button" (click)="nueva()"><i class="bi bi-plus-circle" aria-hidden="true"></i> Nueva venta</button><button class="button button-secondary" type="button" (click)="cancelar()"><i class="bi bi-list" aria-hidden="true"></i> Ver ventas</button></div>
+  } @else {
+    <section class="sales-search-card"><div class="sales-search-box"><span class="sales-search-icon"><i class="bi bi-search" aria-hidden="true"></i></span><input type="search" placeholder="Buscar por código, cliente, empleado o fecha..." [value]="busqueda()" (input)="actualizarBusqueda($event)"></div></section>
+    @if (cargando()) { <section class="content-card empty-state">Cargando ventas...</section> } @else { <section class="content-card list-card"><div class="table-wrapper"><table class="data-table sales-table"><thead><tr><th># Venta</th><th>Cliente</th><th>Empleado</th><th>Fecha</th><th>Total</th><th>Método de pago</th><th>Acciones</th></tr></thead><tbody>@for (venta of ventasFiltradas(); track venta.codigo_venta) { <tr><td><strong>{{ venta.codigo_venta }}</strong></td><td>{{ venta.cliente_nombre }}</td><td>{{ venta.empleado_nombre }}</td><td>{{ venta.fecha_venta | date:'dd/MM/yyyy' }}</td><td>${{ venta.total_venta | number:'1.2-2' }}</td><td>{{ venta.metodo_pago_nombre }}</td><td class="actions-cell"><button class="view-action" type="button" (click)="ver(venta)" aria-label="Ver venta"><i class="bi bi-eye" aria-hidden="true"></i></button></td></tr> } @empty { <tr><td colspan="7">No hay ventas registradas.</td></tr> }</tbody></table></div></section> }
+  }
+</main>

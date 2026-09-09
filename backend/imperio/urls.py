@@ -14,6 +14,9 @@ from .views import (
 	RutaViewSet,
 	TipoProductoViewSet,
 	TipoServicioViewSet,
+	VentaViewSet,
+	RelojClienteViewSet,
+	ServicioViewSet,
 	login_empleado,
 )
 
@@ -31,6 +34,9 @@ router.register('tipos-servicio', TipoServicioViewSet, basename='tipo-servicio')
 router.register('estados-servicio', EstadoServicioViewSet, basename='estado-servicio')
 router.register('tipos-producto', TipoProductoViewSet, basename='tipo-producto')
 router.register('productos', ProductoViewSet, basename='producto')
+router.register('ventas', VentaViewSet, basename='venta')
+router.register('relojes-clientes', RelojClienteViewSet, basename='reloj-cliente')
+router.register('servicios', ServicioViewSet, basename='servicio')
 
 urlpatterns = [
 	# Esta ruta es pública porque se utiliza antes de tener un token.

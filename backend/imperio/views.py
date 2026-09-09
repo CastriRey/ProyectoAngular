@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Cliente, Empleado, EstadoServicio, Marca, MetodoPago, Permiso, Perfil, Producto, Rol, Ruta, TipoProducto, TipoServicio
+from .models import Cliente, Empleado, EstadoServicio, Marca, MetodoPago, Permiso, Perfil, Producto, RelojCliente, Rol, Ruta, Servicio, TipoProducto, TipoServicio, Venta
 from .serializers import (
 	ClienteSerializer,
 	EmpleadoSerializer,
@@ -19,6 +19,9 @@ from .serializers import (
 	ProductoSerializer,
 	TipoProductoSerializer,
 	TipoServicioSerializer,
+	VentaSerializer,
+	RelojClienteSerializer,
+	ServicioSerializer,
 )
 
 
@@ -125,3 +128,18 @@ class TipoProductoViewSet(viewsets.ModelViewSet):
 class ProductoViewSet(viewsets.ModelViewSet):
 	queryset = Producto.objects.all().order_by('codigo_producto')
 	serializer_class = ProductoSerializer
+
+
+class VentaViewSet(viewsets.ModelViewSet):
+	queryset = Venta.objects.all().order_by('-fecha_venta', '-codigo_venta')
+	serializer_class = VentaSerializer
+
+
+class RelojClienteViewSet(viewsets.ModelViewSet):
+	queryset = RelojCliente.objects.all().order_by('codigo_reloj_cliente')
+	serializer_class = RelojClienteSerializer
+
+
+class ServicioViewSet(viewsets.ModelViewSet):
+	queryset = Servicio.objects.all().order_by('-fecha_servicio', '-codigo_servicio')
+	serializer_class = ServicioSerializer

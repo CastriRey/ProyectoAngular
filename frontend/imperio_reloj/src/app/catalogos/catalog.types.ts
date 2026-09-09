@@ -1,4 +1,4 @@
-export type CatalogoId = 'marcas' | 'metodos-pago' | 'tipos-servicio' | 'estados-servicio';
+export type CatalogoId = 'marcas' | 'metodos-pago' | 'tipos-producto' | 'tipos-servicio' | 'estados-servicio';
 
 export interface CatalogoConfig {
   recurso: CatalogoId;
