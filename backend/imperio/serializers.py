@@ -128,19 +128,40 @@ class DetalleVentaSerializer(serializers.ModelSerializer):
 
 class VentaSerializer(serializers.ModelSerializer):
 	detalles = serializers.SerializerMethodField()
+	servicios_relacionados = serializers.SerializerMethodField()
 	cliente_nombre = serializers.SerializerMethodField()
 	empleado_nombre = serializers.SerializerMethodField()
 	metodo_pago_nombre = serializers.SerializerMethodField()
 	lineas = serializers.ListField(write_only=True, required=False)
+	servicios = serializers.ListField(write_only=True, required=False)
 
 	class Meta:
 		model = Venta
-		fields = ('codigo_venta', 'identificacion_cliente_venta', 'identificacion_empleado_venta', 'total_venta', 'fecha_venta', 'codigo_metodo_pago', 'detalles', 'cliente_nombre', 'empleado_nombre', 'metodo_pago_nombre', 'lineas')
-		read_only_fields = ('cliente_nombre', 'empleado_nombre', 'metodo_pago_nombre', 'detalles')
+		fields = ('codigo_venta', 'identificacion_cliente_venta', 'identificacion_empleado_venta', 'total_venta', 'fecha_venta', 'codigo_metodo_pago', 'detalles', 'servicios_relacionados', 'cliente_nombre', 'empleado_nombre', 'metodo_pago_nombre', 'lineas', 'servicios')
+		read_only_fields = ('cliente_nombre', 'empleado_nombre', 'metodo_pago_nombre', 'detalles', 'servicios_relacionados')
 
 	def get_detalles(self, venta):
 		items = DetalleVenta.objects.filter(codigo_venta=venta.codigo_venta)
 		return DetalleVentaSerializer(items, many=True).data
+
+	def get_servicios_relacionados(self, venta):
+		servicios = []
+		for servicio in Servicio.objects.filter(codigo_detalle_venta=venta.codigo_venta).order_by('codigo_servicio'):
+			tipo = TipoServicio.objects.filter(codigo_tipo_servicio=servicio.codigo_tipo_servicio).first()
+			estado = EstadoServicio.objects.filter(codigo_estado_servicio=servicio.codigo_estado_servicio).first()
+			reloj = RelojCliente.objects.filter(codigo_reloj_cliente=servicio.codigo_reloj_cliente).first()
+			servicios.append({
+				'codigo_servicio': servicio.codigo_servicio,
+				'codigo_tipo_servicio': servicio.codigo_tipo_servicio,
+				'codigo_estado_servicio': servicio.codigo_estado_servicio,
+				'codigo_reloj_cliente': servicio.codigo_reloj_cliente,
+				'fecha_servicio': servicio.fecha_servicio,
+				'descripcion_falla': servicio.descripcion_falla,
+				'tipo_servicio_nombre': tipo.nombre_tipo_servicio if tipo else 'N/A',
+				'estado_servicio_nombre': estado.nombre_estado_reparacion if estado else 'N/A',
+				'reloj_cliente_nombre': reloj.modelo if reloj else 'N/A',
+			})
+		return servicios
 
 	def get_cliente_nombre(self, venta):
 		cliente = Cliente.objects.filter(identificacion_cliente=venta.identificacion_cliente_venta).first()
@@ -156,12 +177,22 @@ class VentaSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		lineas = validated_data.pop('lineas', [])
-		if not lineas:
-			raise serializers.ValidationError({'lineas': 'La venta debe incluir al menos un producto.'})
+		servicios = validated_data.pop('servicios', [])
+		if not lineas and not servicios:
+			raise serializers.ValidationError({'lineas': 'La venta debe incluir al menos un producto o servicio.'})
 		with transaction.atomic():
 			venta = Venta.objects.create(**validated_data)
 			for linea in lineas:
 				DetalleVenta.objects.create(codigo_venta=venta.codigo_venta, **linea)
+			estado_entregado = EstadoServicio.objects.filter(nombre_estado_reparacion__icontains='ENTREG').first()
+			estados_finales = EstadoServicio.objects.filter(nombre_estado_reparacion__icontains='FINAL').values('codigo_estado_servicio')
+			for servicio_id in servicios:
+				servicio = Servicio.objects.filter(codigo_servicio=servicio_id, codigo_estado_servicio__in=estados_finales).first()
+				if servicio:
+					servicio.codigo_detalle_venta = venta.codigo_venta
+					if estado_entregado:
+						servicio.codigo_estado_servicio = estado_entregado.codigo_estado_servicio
+					servicio.save(update_fields=('codigo_detalle_venta', 'codigo_estado_servicio'))
 		return venta
 
 
@@ -184,6 +215,7 @@ class RelojClienteSerializer(serializers.ModelSerializer):
 
 
 class ServicioSerializer(serializers.ModelSerializer):
+	cliente_id = serializers.SerializerMethodField()
 	tecnico_nombre = serializers.SerializerMethodField()
 	tipo_servicio_nombre = serializers.SerializerMethodField()
 	estado_servicio_nombre = serializers.SerializerMethodField()
@@ -193,7 +225,11 @@ class ServicioSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Servicio
 		fields = '__all__'
-		read_only_fields = ('tecnico_nombre', 'tipo_servicio_nombre', 'estado_servicio_nombre', 'reloj_cliente_nombre', 'cliente_nombre')
+		read_only_fields = ('cliente_id', 'tecnico_nombre', 'tipo_servicio_nombre', 'estado_servicio_nombre', 'reloj_cliente_nombre', 'cliente_nombre')
+
+	def get_cliente_id(self, servicio):
+		reloj = RelojCliente.objects.filter(codigo_reloj_cliente=servicio.codigo_reloj_cliente).first()
+		return reloj.codigo_cliente if reloj else None
 
 	def get_tecnico_nombre(self, servicio):
 		empleado = Empleado.objects.filter(identificacion_empleado=servicio.codigo_tecnico).first()

@@ -21,6 +21,7 @@ export class AuthService {
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('access_token', respuesta.access);
           localStorage.setItem('refresh_token', respuesta.refresh);
+          localStorage.setItem('user_id', String(respuesta.empleado.id));
           localStorage.setItem('user_name', respuesta.empleado.nombre);
           localStorage.setItem('user_primer_apellido', respuesta.empleado.primer_apellido);
           localStorage.setItem('user_correo', respuesta.empleado.correo);
@@ -46,10 +47,17 @@ export class AuthService {
     return `${nombre} ${primerApellido}`.trim() || 'usuario';
   }
 
+  obtenerIdUsuario(): number | null {
+    if (!isPlatformBrowser(this.platformId)) return null;
+    const id = Number(localStorage.getItem('user_id'));
+    return Number.isInteger(id) && id > 0 ? id : null;
+  }
+
   cerrarSesion(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user_id');
       localStorage.removeItem('user_name');
       localStorage.removeItem('user_primer_apellido');
       localStorage.removeItem('user_correo');

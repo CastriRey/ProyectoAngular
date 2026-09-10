@@ -834,14 +834,31 @@ app-ventas-page .legacy-section-body > label,
 app-ventas-page .legacy-product-add label {
 	display: block;
 	margin-bottom: 8px;
+	align-self: auto;
 	color: #1f2937;
 	font-weight: 700;
+}
+
+app-ventas-page .legacy-section-body > label {
+	margin-top: 0;
+}
+
+app-ventas-page .legacy-section-body .legacy-product-add label {
+	margin-bottom: 8px;
 }
 
 app-ventas-page .legacy-section-body > small {
 	display: block;
 	margin-top: 6px;
 	color: #6b7280;
+}
+
+app-ventas-page .sales-secondary-label {
+	display: block;
+	margin-top: 18px;
+	margin-bottom: 8px;
+	color: #1f2937;
+	font-weight: 700;
 }
 
 app-ventas-page .legacy-muted {
@@ -902,6 +919,54 @@ app-ventas-page .sales-lines {
 
 app-ventas-page .sales-lines .legacy-section-body {
 	padding: 18px;
+}
+
+app-ventas-page .sales-lines table,
+app-ventas-page .services-sale-table table {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+app-ventas-page .sales-lines th,
+app-ventas-page .sales-lines td,
+app-ventas-page .services-sale-table th,
+app-ventas-page .services-sale-table td {
+	padding: 10px 12px;
+	vertical-align: middle;
+}
+
+app-ventas-page .sales-lines th:nth-child(1) { width: 38%; }
+app-ventas-page .sales-lines th:nth-child(2) { width: 17%; }
+app-ventas-page .sales-lines th:nth-child(3) { width: 15%; }
+app-ventas-page .sales-lines th:nth-child(4) { width: 18%; }
+app-ventas-page .sales-lines th:nth-child(5) { width: 12%; }
+
+app-ventas-page .services-sale-table {
+	max-height: 260px;
+	overflow: auto;
+}
+
+app-ventas-page .services-sale-table table {
+	min-width: 720px;
+	font-size: 0.88rem;
+}
+
+app-ventas-page .services-sale-table th {
+	background: #212529;
+	color: #ffffff;
+	font-weight: 600;
+	text-align: left;
+}
+
+app-ventas-page .services-sale-table td {
+	border-bottom: 1px solid #e0e0e0;
+}
+
+app-ventas-page .services-sale-table td:nth-child(5) {
+	max-width: 260px;
+	white-space: normal;
+	word-break: break-word;
 }
 
 app-ventas-page .payment-card {
@@ -1009,8 +1074,15 @@ app-ventas-page .form-actions {
 	display: flex;
 	grid-column: 1 / -1;
 	gap: 10px;
+	align-items: center;
 	padding-top: 18px;
 	border-top: 1px solid #eef2f7;
+}
+
+app-ventas-page .sales-submit-status {
+	max-width: 520px;
+	color: #b91c1c;
+	font-size: 0.88rem;
 }
 
 app-ventas-page .sales-search-card {
@@ -1050,6 +1122,33 @@ app-ventas-page .sales-search-box input {
 
 app-ventas-page .sales-table {
 	min-width: 850px;
+	table-layout: fixed;
+}
+
+app-ventas-page .sales-table th,
+app-ventas-page .sales-table td {
+	padding: 14px 18px;
+	vertical-align: middle;
+	white-space: normal;
+}
+
+app-ventas-page .sales-table th:nth-child(1) { width: 9%; }
+app-ventas-page .sales-table th:nth-child(2) { width: 20%; }
+app-ventas-page .sales-table th:nth-child(3) { width: 20%; }
+app-ventas-page .sales-table th:nth-child(4) { width: 13%; }
+app-ventas-page .sales-table th:nth-child(5) { width: 13%; text-align: right; }
+app-ventas-page .sales-table th:nth-child(6) { width: 17%; }
+app-ventas-page .sales-table th:nth-child(7) { width: 8%; }
+
+app-ventas-page .sales-table td:nth-child(5) {
+	text-align: right;
+	white-space: nowrap;
+}
+
+app-ventas-page .sales-table td:nth-child(2),
+app-ventas-page .sales-table td:nth-child(3),
+app-ventas-page .sales-table td:nth-child(6) {
+	line-height: 1.35;
 }
 
 app-ventas-page .sales-table .actions-cell,
@@ -1200,6 +1299,36 @@ app-ventas-page .factura-productos td small {
 	display: block;
 	margin-top: 4px;
 	color: #6b7280;
+}
+
+app-ventas-page .factura-servicios {
+	margin: 2rem 0;
+}
+
+app-ventas-page .factura-servicios h3 {
+	margin: 0 0 10px;
+	color: #212529;
+	font-size: 0.95rem;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+app-ventas-page .factura-servicios table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.88rem;
+}
+
+app-ventas-page .factura-servicios th {
+	padding: 10px 12px;
+	background: #212529;
+	color: #ffffff;
+	text-align: left;
+}
+
+app-ventas-page .factura-servicios td {
+	padding: 10px 12px;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 app-ventas-page .numero {

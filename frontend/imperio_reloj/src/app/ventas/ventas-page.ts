@@ -8,7 +8,8 @@ import { Cliente } from '../clientes/cliente';
 import { Empleado } from '../empleados/empleado';
 import { Producto } from '../productos/producto';
 import { NavComponent } from '../shared/nav/nav.component';
-import { Venta, VentaLinea } from './venta';
+import { AuthService } from '../auth/auth.service';
+import { ServicioRelacionado, Venta, VentaLinea } from './venta';
 import { MetodoPagoOption, VentasService } from './ventas.service';
 
 @Component({
@@ -21,12 +22,15 @@ export class VentasPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   protected readonly ventas = signal<Venta[]>([]);
   protected readonly clientes = signal<Cliente[]>([]);
   protected readonly empleados = signal<Empleado[]>([]);
   protected readonly productos = signal<Producto[]>([]);
   protected readonly metodosPago = signal<MetodoPagoOption[]>([]);
+  protected readonly servicios = signal<ServicioRelacionado[]>([]);
+  protected readonly serviciosSeleccionados = signal<number[]>([]);
   protected readonly lineas = signal<VentaLinea[]>([]);
   protected readonly ventaSeleccionada = signal<Venta | null>(null);
   protected readonly cargando = signal(true);
@@ -57,14 +61,32 @@ export class VentasPage {
 
   protected cargarDatos(): void {
     this.cargando.set(true);
-    forkJoin({ ventas: this.service.obtenerVentas(), clientes: this.service.obtenerClientes(), empleados: this.service.obtenerEmpleados(), productos: this.service.obtenerProductos(), metodosPago: this.service.obtenerMetodosPago() }).subscribe({
-      next: (datos) => { this.ventas.set(datos.ventas); this.clientes.set(datos.clientes); this.empleados.set(datos.empleados); this.productos.set(datos.productos); this.metodosPago.set(datos.metodosPago); this.cargando.set(false); },
+    forkJoin({ ventas: this.service.obtenerVentas(), clientes: this.service.obtenerClientes(), empleados: this.service.obtenerEmpleados(), productos: this.service.obtenerProductos(), metodosPago: this.service.obtenerMetodosPago(), servicios: this.service.obtenerServicios() }).subscribe({
+      next: (datos) => { this.ventas.set(datos.ventas); this.clientes.set(datos.clientes); this.empleados.set(datos.empleados); this.productos.set(datos.productos); this.metodosPago.set(datos.metodosPago); this.servicios.set(datos.servicios); this.asignarEmpleadoActual(datos.empleados); this.cargando.set(false); },
       error: () => { this.error.set('No se pudieron cargar las ventas y sus opciones.'); this.cargando.set(false); },
     });
   }
 
+  private asignarEmpleadoActual(empleados: Empleado[]): void {
+    const id = this.authService.obtenerIdUsuario();
+    const correo = typeof localStorage !== 'undefined' ? localStorage.getItem('user_correo') : null;
+    const empleado = (id ? empleados.find((item) => item.identificacion_empleado === id) : undefined)
+      ?? empleados.find((item) => item.correo_empleado === correo);
+    if (empleado) this.form.controls.identificacion_empleado_venta.setValue(empleado.identificacion_empleado);
+  }
+
   protected cargarDetalle(id: number): void { this.service.obtenerVenta(id).subscribe({ next: (venta) => this.ventaSeleccionada.set(venta), error: () => this.error.set('No se pudo cargar el detalle de la venta.') }); }
   protected actualizarBusqueda(event: Event): void { this.busqueda.set((event.target as HTMLInputElement).value); }
+  protected serviciosFinalizadosDelCliente(): ServicioRelacionado[] {
+    const clienteId = this.form.controls.identificacion_cliente_venta.value;
+    return this.servicios().filter((servicio) => servicio.cliente_id === clienteId && servicio.estado_servicio_nombre?.toLowerCase().includes('final') && !servicio.codigo_detalle_venta);
+  }
+  protected nombreCliente(id: number): string {
+    const cliente = this.clientes().find((item) => item.identificacion_cliente === id);
+    return cliente ? `${cliente.nombre_cliente} ${cliente.primer_apellido_cliente}` : '';
+  }
+  protected cambiarCliente(): void { this.serviciosSeleccionados.set([]); }
+  protected alternarServicio(id: number, event: Event): void { const checked = (event.target as HTMLInputElement).checked; this.serviciosSeleccionados.update((ids) => checked ? [...ids, id] : ids.filter((actual) => actual !== id)); }
   protected nueva(): void { this.formularioVisible.set(true); this.ventaSeleccionada.set(null); void this.router.navigate(['/ventas/crear']); }
   protected ver(venta: Venta): void { this.formularioVisible.set(false); void this.router.navigate(['/ventas', venta.codigo_venta]); this.cargarDetalle(venta.codigo_venta); }
 
@@ -96,27 +118,35 @@ export class VentasPage {
 
   protected quitarProducto(linea: VentaLinea): void { this.lineas.update((lineas) => lineas.filter((actual) => actual.codigo_producto !== linea.codigo_producto)); }
 
+  protected completarVenta(): void {
+    this.guardar();
+  }
+
   protected guardar(): void {
     this.error.set('');
     const datos = this.form.getRawValue();
-    const ventaInvalida = datos.identificacion_cliente_venta < 1 || datos.identificacion_empleado_venta < 1 || datos.codigo_metodo_pago < 1;
-    if (ventaInvalida || this.lineas().length === 0) {
+    const clienteId = Number(datos.identificacion_cliente_venta);
+    const empleadoId = Number(datos.identificacion_empleado_venta);
+    const metodoPagoId = Number(datos.codigo_metodo_pago);
+    const ventaInvalida = clienteId < 1 || empleadoId < 1 || metodoPagoId < 1;
+    if (ventaInvalida || (this.lineas().length === 0 && this.serviciosSeleccionados().length === 0)) {
       if (ventaInvalida) {
         this.form.controls.identificacion_cliente_venta.markAsTouched();
         this.form.controls.identificacion_empleado_venta.markAsTouched();
         this.form.controls.codigo_metodo_pago.markAsTouched();
         this.error.set('Selecciona el cliente, el empleado y el método de pago.');
       } else {
-        this.error.set('Agrega al menos un producto a la venta.');
+        this.error.set('Agrega al menos un producto o servicio a la venta.');
       }
       return;
     }
     this.guardando.set(true);
-    this.service.crearVenta({ identificacion_cliente_venta: datos.identificacion_cliente_venta, identificacion_empleado_venta: datos.identificacion_empleado_venta, codigo_metodo_pago: datos.codigo_metodo_pago, total_venta: this.total(), fecha_venta: new Date().toISOString(), lineas: this.lineas().map((linea) => ({ codigo_producto: linea.codigo_producto, cantidad_producto: linea.cantidad_producto, precio_unitario_producto: linea.precio_unitario_producto })) }).subscribe({
+    this.service.crearVenta({ identificacion_cliente_venta: clienteId, identificacion_empleado_venta: empleadoId, codigo_metodo_pago: metodoPagoId, total_venta: this.total(), fecha_venta: new Date().toISOString(), lineas: this.lineas().map((linea) => ({ codigo_producto: linea.codigo_producto, cantidad_producto: linea.cantidad_producto, precio_unitario_producto: linea.precio_unitario_producto })), servicios: this.serviciosSeleccionados() }).subscribe({
       next: (venta) => {
         this.guardando.set(false);
         this.formularioVisible.set(false);
         this.lineas.set([]);
+        this.serviciosSeleccionados.set([]);
         this.ventaSeleccionada.set(venta);
         void this.router.navigate(['/ventas', venta.codigo_venta]);
         this.cargarDatos();
