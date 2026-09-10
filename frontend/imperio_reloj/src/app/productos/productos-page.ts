@@ -12,6 +12,7 @@ import { ProductosService } from './productos.service';
   selector: 'app-productos-page',
   imports: [NavComponent, ReactiveFormsModule, DecimalPipe],
   templateUrl: './productos-page.html',
+  styleUrl: './productos-page.css',
 })
 export class ProductosPage {
   private readonly service = inject(ProductosService);

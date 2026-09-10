@@ -8,6 +8,7 @@ import { NavComponent } from '../shared/nav/nav.component';
   selector: 'app-dashboard-page',
   imports: [RouterLink, NavComponent],
   templateUrl: './dashboard-page.html',
+  styleUrls: ['./dashboard-page.css'],
 })
 export class DashboardPage {
   protected readonly authService = inject(AuthService);

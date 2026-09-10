@@ -13,6 +13,7 @@ import { forkJoin } from 'rxjs';
   selector: 'app-clientes-page',
   imports: [NavComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './clientes-page.html',
+  styleUrl: './clientes-page.css',
 })
 export class ClientesPage {
   private readonly clientesService = inject(ClientesService);

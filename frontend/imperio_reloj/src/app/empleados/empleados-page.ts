@@ -13,6 +13,7 @@ import { forkJoin } from 'rxjs';
   selector: 'app-empleados-page',
   imports: [NavComponent, ReactiveFormsModule],
   templateUrl: './empleados-page.html',
+  styleUrl: './empleados-page.css',
 })
 export class EmpleadosPage {
   private readonly service = inject(EmpleadosService);

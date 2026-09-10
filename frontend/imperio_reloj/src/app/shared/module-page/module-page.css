@@ -1,0 +1,9 @@
+:host { display: block; min-height: 100vh; background: #f5f7fa; color: #1f2937; }
+main { width: min(1440px, calc(100% - 48px)); margin: 0 auto; padding: 42px 0 56px; }
+main > header { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+main section { margin-bottom: 24px; padding: 24px; border-radius: 16px; background: #fff; box-shadow: 0 6px 20px rgba(15,23,42,.06); }
+main input, main textarea { width: 100%; box-sizing: border-box; padding: 11px 13px; border: 1px solid #d1d5db; border-radius: 10px; font: inherit; }
+main table { width: 100%; border-collapse: collapse; }
+main th { padding: 14px 16px; background: linear-gradient(135deg,#111827,#1f2937); color: #fff; text-align: left; }
+main td { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; }
+@media (max-width: 760px) { main { width: min(100% - 28px, 620px); padding-top: 28px; } main > header { align-items: flex-start; flex-direction: column; } }

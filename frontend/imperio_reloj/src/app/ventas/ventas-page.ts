@@ -16,6 +16,7 @@ import { MetodoPagoOption, VentasService } from './ventas.service';
   selector: 'app-ventas-page',
   imports: [NavComponent, ReactiveFormsModule, DecimalPipe, DatePipe],
   templateUrl: './ventas-page.html',
+  styleUrl: './ventas-page.css',
 })
 export class VentasPage {
   private readonly service = inject(VentasService);

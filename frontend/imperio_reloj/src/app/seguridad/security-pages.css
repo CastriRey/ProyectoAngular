@@ -1,0 +1,11 @@
+:host { display: block; min-height: 100vh; background: #f5f7fa; color: #1f2937; }
+.data-form { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px 22px; }
+.data-form label { align-self: end; margin: 0 0 -8px; color: #334155; font-size: .86rem; font-weight: 700; }
+.data-form input, .data-form select, .data-form textarea { width: 100%; box-sizing: border-box; min-height: 46px; padding: 11px 13px; border: 1px solid #d7dee8; border-radius: 10px; outline: none; background: #f8fafc; color: #1e293b; font: inherit; }
+.data-form input:focus, .data-form select:focus, .data-form textarea:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,.13); }
+.data-form > div { display: flex; grid-column: 1 / -1; gap: 10px; margin-top: 6px; padding-top: 18px; border-top: 1px solid #eef2f7; }
+.data-table .actions-cell { text-align: center; white-space: nowrap; }
+.data-table .actions-cell button { width: 30px; min-height: 30px; padding: 0; border: 0; border-radius: 4px; cursor: pointer; }
+.data-table .edit-action { background: #ffc107; color: #111827; }
+.data-table .delete-action { margin-left: 7px; background: #dc3545; color: #fff; }
+@media (max-width: 760px) { .data-form { grid-template-columns: 1fr; } .data-form > div { grid-column: auto; } }

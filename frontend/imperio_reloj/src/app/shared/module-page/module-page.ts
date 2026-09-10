@@ -7,6 +7,7 @@ import { NavComponent } from '../nav/nav.component';
   selector: 'app-module-page',
   imports: [NavComponent, RouterLink],
   templateUrl: './module-page.html',
+  styleUrl: './module-page.css',
 })
 export class ModulePage {
   private readonly route = inject(ActivatedRoute);

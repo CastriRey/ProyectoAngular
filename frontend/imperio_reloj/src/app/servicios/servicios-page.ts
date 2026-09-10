@@ -13,6 +13,7 @@ import { ServiciosService } from './servicios.service';
   selector: 'app-servicios-page',
   imports: [NavComponent, ReactiveFormsModule, DatePipe],
   templateUrl: './servicios-page.html',
+  styleUrl: './servicios-page.css',
 })
 export class ServiciosPage {
   private readonly service = inject(ServiciosService);

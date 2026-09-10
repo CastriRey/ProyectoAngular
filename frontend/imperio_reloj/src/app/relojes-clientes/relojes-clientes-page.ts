@@ -11,6 +11,7 @@ import { RelojesClientesService } from './relojes-clientes.service';
   selector: 'app-relojes-clientes-page',
   imports: [NavComponent, ReactiveFormsModule],
   templateUrl: './relojes-clientes-page.html',
+  styleUrl: './relojes-clientes-page.css',
 })
 export class RelojesClientesPage {
   private readonly service = inject(RelojesClientesService);

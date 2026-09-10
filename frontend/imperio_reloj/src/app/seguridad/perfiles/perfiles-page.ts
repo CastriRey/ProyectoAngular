@@ -10,6 +10,7 @@ import { SecurityService } from '../security.service';
   selector: 'app-perfiles-page',
   imports: [NavComponent, ReactiveFormsModule],
   templateUrl: './perfiles-page.html',
+  styleUrl: '../security-pages.css',
 })
 export class PerfilesPage {
   private readonly service = inject(SecurityService);

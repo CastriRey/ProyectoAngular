@@ -6,25 +6,32 @@ import { NavComponent } from '../shared/nav/nav.component';
 import { CatalogService } from './catalog.service';
 import { CatalogoConfig, CatalogoRegistro } from './catalog.types';
 
+// Crear componente de Angular llamao CatalogPage, que es el encargado de mostrar la lista de registros
+// de un catálogo, y permitir crear, editar y eliminar registros.
 @Component({
   selector: 'app-catalog-page',
   imports: [NavComponent, ReactiveFormsModule],
   templateUrl: './catalog-page.html',
+  styleUrl: './catalog-page.css',
 })
 export class CatalogPage {
+  // Dame una instancia de CatalogService, FormBuilder, ActivatedRoute y Router
   private readonly service = inject(CatalogService);
+  //Para trabajar con formularios reactivos, necesitamos una instancia de FormBuilder
   private readonly formBuilder = inject(FormBuilder);
+  // Para conocer la información de la ruta actual, necesitamos una instancia de ActivatedRoute
   private readonly route = inject(ActivatedRoute);
+  // Para navegar a otras rutas, necesitamos una instancia de Router
   private readonly router = inject(Router);
 
   protected readonly config: CatalogoConfig = this.route.snapshot.data['catalogo'];
   protected readonly registros = signal<CatalogoRegistro[]>([]);
-  protected readonly busqueda = signal('');
-  protected readonly error = signal('');
-  protected readonly cargando = signal(true);
-  protected readonly guardando = signal(false);
-  protected readonly formularioVisible = signal(false);
-  protected readonly editandoId = signal<number | null>(null);
+  protected readonly busqueda = signal(''); // Guarda lo que se escribe en el campo de búsqueda
+  protected readonly error = signal(''); // Guarda el mensaje de error si ocurre algún problema al cargar los registros
+  protected readonly cargando = signal(true); // Indica si se está cargando
+  protected readonly guardando = signal(false); // Indica si está guardando
+  protected readonly formularioVisible = signal(false); // Indica si el formulario de creación/edición está visible
+  protected readonly editandoId = signal<number | null>(null); // Indica el id del registro que se está editando, o null si se está creando un nuevo registro
   protected readonly registrosFiltrados = computed(() => {
     const texto = this.busqueda().trim().toLowerCase();
     if (!texto) return this.registros();
@@ -32,6 +39,7 @@ export class CatalogPage {
   });
   protected readonly form = this.formBuilder.nonNullable.group({ nombre: ['', Validators.required] });
 
+  // Decide si debe cargar el formulario
   constructor() {
     this.cargar();
     const id = this.route.snapshot.paramMap.get('id');
@@ -41,6 +49,8 @@ export class CatalogPage {
     }
   }
 
+  // Sí this.config.recurso es 'marcas', 'metodos-pago', 'tipos-producto',
+  // 'tipos-servicio' o 'estados-servicio', entonces carga los registros del catálogo correspondiente
   protected cargar(): void {
     this.cargando.set(true);
     this.service.listar(this.config.recurso).subscribe({
