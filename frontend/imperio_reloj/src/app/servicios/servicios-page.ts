@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
 
 import { Empleado } from '../empleados/empleado';
 import { NavComponent } from '../shared/nav/nav.component';
@@ -74,7 +75,7 @@ export class ServiciosPage {
   protected nuevo(): void { this.editandoId.set(null); this.form.reset({ codigo_servicio: 0, codigo_tecnico: 0, codigo_tipo_servicio: 0, codigo_estado_servicio: 0, codigo_reloj_cliente: 0, codigo_detalle_venta: null, fecha_servicio: new Date().toISOString().slice(0, 16), descripcion_falla: '' }); this.formularioVisible.set(true); void this.router.navigate(['/servicios/nuevo']); }
   protected editar(servicio: Servicio): void { this.editandoId.set(servicio.codigo_servicio); this.cargarEnFormulario(servicio); this.formularioVisible.set(true); void this.router.navigate(['/servicios', servicio.codigo_servicio, 'editar']); }
   private cargarEnFormulario(servicio: Servicio): void { this.form.patchValue({ ...servicio, fecha_servicio: servicio.fecha_servicio ? servicio.fecha_servicio.slice(0, 16) : '' }); }
-  protected guardar(): void { if (this.form.invalid) { this.form.markAllAsTouched(); return; } this.guardando.set(true); const datos = this.form.getRawValue(); const request = this.editandoId() === null ? this.service.crearServicio(datos) : this.service.actualizarServicio(this.editandoId()!, datos); request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { const detalle = respuesta.error && typeof respuesta.error === 'object' ? Object.values(respuesta.error).flat().join(' ') : ''; this.error.set(detalle || 'No se pudo guardar el servicio.'); this.guardando.set(false); } }); }
+  protected guardar(): void { if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; } this.guardando.set(true); const datos = this.form.getRawValue(); const request = this.editandoId() === null ? this.service.crearServicio(datos) : this.service.actualizarServicio(this.editandoId()!, datos); request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, 'No se pudo guardar el servicio.')); this.guardando.set(false); } }); }
   protected eliminar(servicio: Servicio): void { if (!confirm(`¿Eliminar el servicio #${servicio.codigo_servicio}?`)) return; this.service.eliminarServicio(servicio.codigo_servicio).subscribe({ next: () => this.cargarDatos(), error: () => this.error.set('No se pudo eliminar el servicio.') }); }
   protected cancelar(): void { this.formularioVisible.set(false); this.editandoId.set(null); this.guardando.set(false); void this.router.navigate([this.finalizados() ? '/servicios/finalizados' : '/servicios']); this.cargarDatos(); }
 }

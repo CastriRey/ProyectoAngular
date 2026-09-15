@@ -7,6 +7,7 @@ import { forkJoin } from 'rxjs';
 import { NavComponent } from '../shared/nav/nav.component';
 import { MarcaOption, Producto, TipoProductoOption } from './producto';
 import { ProductosService } from './productos.service';
+import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
 
 @Component({
   selector: 'app-productos-page',
@@ -97,11 +98,11 @@ export class ProductosPage {
   }
 
   protected guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; }
     this.guardando.set(true);
     const datos = this.form.getRawValue();
     const request = this.editandoId() === null ? this.service.crearProducto(datos) : this.service.actualizarProducto(this.editandoId()!, datos);
-    request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { this.error.set(respuesta.error?.detail ?? 'No se pudo guardar el producto.'); this.guardando.set(false); } });
+    request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, 'No se pudo guardar el producto.')); this.guardando.set(false); } });
   }
 
   protected eliminar(producto: Producto): void {

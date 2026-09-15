@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavComponent } from '../../shared/nav/nav.component';
 import { Perfil, Rol } from '../security.types';
 import { SecurityService } from '../security.service';
+import { apiErrorMessage, formValidationMessage } from '../../shared/form-errors';
 
 @Component({
   selector: 'app-perfiles-page',
@@ -26,7 +27,7 @@ export class PerfilesPage {
   protected readonly guardando = signal(false);
   protected readonly form = this.formBuilder.nonNullable.group({
     nombre_perfil: ['', Validators.required],
-    codigo_rol: [0, Validators.min(1)],
+    codigo_rol: [0, [Validators.required, Validators.min(1)]],
   });
 
   constructor() {
@@ -61,10 +62,10 @@ export class PerfilesPage {
   }
 
   protected guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; }
     this.guardando.set(true);
     const request = this.editandoId() === null ? this.service.crearPerfil(this.form.getRawValue()) : this.service.actualizarPerfil(this.editandoId()!, this.form.getRawValue());
-    request.subscribe({ next: () => this.cancelar(), error: () => { this.error.set('No se pudo guardar el perfil.'); this.guardando.set(false); } });
+    request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, 'No se pudo guardar el perfil.')); this.guardando.set(false); } });
   }
 
   protected eliminar(perfil: Perfil): void {

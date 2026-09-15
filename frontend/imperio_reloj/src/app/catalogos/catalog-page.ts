@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavComponent } from '../shared/nav/nav.component';
 import { CatalogService } from './catalog.service';
 import { CatalogoConfig, CatalogoRegistro } from './catalog.types';
+import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
 
 // Crear componente de Angular llamao CatalogPage, que es el encargado de mostrar la lista de registros
 // de un catálogo, y permitir crear, editar y eliminar registros.
@@ -81,7 +82,7 @@ export class CatalogPage {
   }
 
   protected guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; }
     this.guardando.set(true);
     const data = { [this.config.nameKey]: this.form.controls.nombre.value };
     const request = this.editandoId() === null
@@ -89,7 +90,7 @@ export class CatalogPage {
       : this.service.actualizar(this.config.recurso, this.editandoId()!, data);
     request.subscribe({
       next: () => this.cancelar(),
-      error: () => { this.error.set(`No se pudo guardar ${this.config.titulo.toLowerCase()}.`); this.guardando.set(false); },
+      error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, `No se pudo guardar ${this.config.titulo.toLowerCase()}.`)); this.guardando.set(false); },
     });
   }
 

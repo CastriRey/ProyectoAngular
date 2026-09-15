@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavComponent } from '../../shared/nav/nav.component';
 import { Ruta } from '../security.types';
 import { SecurityService } from '../security.service';
+import { apiErrorMessage, formValidationMessage } from '../../shared/form-errors';
 
 @Component({
   selector: 'app-rutas-page',
@@ -60,10 +61,10 @@ export class RutasPage {
   }
 
   protected guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; }
     this.guardando.set(true);
     const request = this.editandoId() === null ? this.service.crearRuta(this.form.getRawValue()) : this.service.actualizarRuta(this.editandoId()!, this.form.getRawValue());
-    request.subscribe({ next: () => this.cancelar(), error: () => { this.error.set('No se pudo guardar la ruta.'); this.guardando.set(false); } });
+    request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, 'No se pudo guardar la ruta.')); this.guardando.set(false); } });
   }
 
   protected eliminar(ruta: Ruta): void {

@@ -8,6 +8,7 @@ import { NavComponent } from '../shared/nav/nav.component';
 import { Empleado } from '../empleados/empleado';
 import { EmpleadosService } from '../empleados/empleados.service';
 import { forkJoin } from 'rxjs';
+import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
 
 @Component({
   selector: 'app-clientes-page',
@@ -104,11 +105,11 @@ export class ClientesPage {
   }
 
   protected guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; }
     this.guardando.set(true);
     const datos = this.form.getRawValue();
     const request = this.editandoId() === null ? this.clientesService.crearCliente(datos) : this.clientesService.actualizarCliente(this.editandoId()!, datos);
-    request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { this.error.set(respuesta.error?.detail ?? 'No se pudo guardar el cliente.'); this.guardando.set(false); } });
+    request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, 'No se pudo guardar el cliente.')); this.guardando.set(false); } });
   }
 
   protected eliminar(cliente: Cliente): void {

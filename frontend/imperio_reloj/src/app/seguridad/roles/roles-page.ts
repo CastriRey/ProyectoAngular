@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavComponent } from '../../shared/nav/nav.component';
 import { Rol } from '../security.types';
 import { SecurityService } from '../security.service';
+import { apiErrorMessage, formValidationMessage } from '../../shared/form-errors';
 
 @Component({
   selector: 'app-roles-page',
@@ -59,14 +60,14 @@ export class RolesPage {
   }
 
   protected guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; }
     this.guardando.set(true);
     const request = this.editandoId() === null
       ? this.service.crearRol(this.form.getRawValue())
       : this.service.actualizarRol(this.editandoId()!, this.form.getRawValue());
     request.subscribe({
       next: () => this.cancelar(),
-      error: () => { this.error.set('No se pudo guardar el rol.'); this.guardando.set(false); },
+      error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, 'No se pudo guardar el rol.')); this.guardando.set(false); },
     });
   }
 

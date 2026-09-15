@@ -8,6 +8,7 @@ import { EmpleadosService } from './empleados.service';
 import { SecurityService } from '../seguridad/security.service';
 import { Perfil } from '../seguridad/security.types';
 import { forkJoin } from 'rxjs';
+import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
 
 @Component({
   selector: 'app-empleados-page',
@@ -102,7 +103,7 @@ export class EmpleadosPage {
   }
 
   protected guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; }
     this.guardando.set(true);
     const datos = this.form.getRawValue();
     const request = this.editandoId() === null
@@ -110,7 +111,7 @@ export class EmpleadosPage {
       : this.service.actualizarEmpleado(this.editandoId()!, datos);
     request.subscribe({
       next: () => this.cancelar(),
-      error: (respuesta) => { this.error.set(respuesta.error?.detail ?? 'No se pudo guardar el empleado.'); this.guardando.set(false); },
+      error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, 'No se pudo guardar el empleado.')); this.guardando.set(false); },
     });
   }
 

@@ -2,7 +2,25 @@ from django.db import models
 from django.utils import timezone
 
 
-class Auditoria(models.Model):
+class UppercaseModel(models.Model):
+	class Meta:
+		abstract = True
+
+	def save(self, *args, **kwargs):
+		for field in self._meta.fields:
+			if not isinstance(field, (models.CharField, models.TextField)):
+				continue
+			if field.name == 'password' or (
+				self.__class__.__name__ == 'Empleado' and field.name == 'correo_empleado'
+			):
+				continue
+			value = getattr(self, field.name, None)
+			if isinstance(value, str):
+				setattr(self, field.name, value.upper())
+		return super().save(*args, **kwargs)
+
+
+class Auditoria(UppercaseModel):
 	# Registra cambios importantes realizados sobre las tablas del sistema.
 	id_auditoria = models.AutoField(primary_key=True)
 	tabla_afectada = models.CharField(max_length=50, blank=True, null=True)
@@ -16,7 +34,7 @@ class Auditoria(models.Model):
 		db_table = 'auditoria'
 
 
-class ErrorSistema(models.Model):
+class ErrorSistema(UppercaseModel):
 	# Guarda errores de negocio o de infraestructura para poder auditarlos.
 	codigo_error = models.AutoField(primary_key=True)
 	descripcion_error = models.CharField(max_length=255, blank=True, null=True)
@@ -25,7 +43,7 @@ class ErrorSistema(models.Model):
 		db_table = 'errores_sistema'
 
 
-class Rol(models.Model):
+class Rol(UppercaseModel):
 	# Un rol agrupa una categoría general de permisos.
 	codigo_rol = models.AutoField(primary_key=True)
 	nombre_rol = models.CharField(max_length=50)
@@ -34,7 +52,7 @@ class Rol(models.Model):
 		db_table = 'roles'
 
 
-class Perfil(models.Model):
+class Perfil(UppercaseModel):
 	# Un perfil concreta los permisos que recibe un empleado.
 	codigo_perfil = models.AutoField(primary_key=True)
 	nombre_perfil = models.CharField(max_length=50)
@@ -45,9 +63,9 @@ class Perfil(models.Model):
 		db_table = 'perfiles'
 
 
-class Empleado(models.Model):
+class Empleado(UppercaseModel):
 	# La cédula identifica de forma única al empleado dentro del sistema.
-	identificacion_empleado = models.IntegerField(primary_key=True)
+	identificacion_empleado = models.BigIntegerField(primary_key=True)
 	nombre_empleado = models.CharField(max_length=40)
 	primer_apellido_empleado = models.CharField(max_length=30)
 	segundo_apellido_empleado = models.CharField(max_length=30, blank=True)
@@ -57,7 +75,7 @@ class Empleado(models.Model):
 	# Se almacena un hash; nunca la contraseña escrita directamente.
 	password = models.CharField(max_length=200, db_column='hash_contrasena_empleado')
 	# Se mantiene como entero hasta migrar también la carga inicial de perfiles.
-	codigo_perfil_empleado = models.IntegerField()
+	codigo_perfil_empleado = models.BigIntegerField()
 
 	class Meta:
 		db_table = 'empleados'
@@ -68,9 +86,9 @@ class Empleado(models.Model):
 		return self.identificacion_empleado
 
 
-class Cliente(models.Model):
+class Cliente(UppercaseModel):
 	# Documento y datos de contacto de la persona que compra o solicita servicios.
-	identificacion_cliente = models.IntegerField(primary_key=True)
+	identificacion_cliente = models.BigIntegerField(primary_key=True)
 	nombre_cliente = models.CharField(max_length=40)
 	primer_apellido_cliente = models.CharField(max_length=40)
 	segundo_apellido_cliente = models.CharField(max_length=40, blank=True, null=True)
@@ -78,7 +96,7 @@ class Cliente(models.Model):
 	telefono_cliente = models.CharField(max_length=20, blank=True, null=True)
 	fecha_registro_cliente = models.DateTimeField(default=timezone.now)
 	# Identifica al empleado que registró o atiende al cliente.
-	identificacion_empleado = models.IntegerField()
+	identificacion_empleado = models.BigIntegerField()
 	comentarios = models.CharField(max_length=150, blank=True, null=True)
 
 	class Meta:
@@ -88,7 +106,7 @@ class Cliente(models.Model):
 		return f'{self.nombre_cliente} {self.primer_apellido_cliente}'
 
 
-class Ruta(models.Model):
+class Ruta(UppercaseModel):
 	# Representa una URL del sistema que puede protegerse con permisos.
 	codigo_ruta = models.AutoField(primary_key=True)
 	nombre_ruta = models.CharField(max_length=50)
@@ -101,10 +119,10 @@ class Ruta(models.Model):
 		db_table = 'rutas'
 
 
-class Permiso(models.Model):
+class Permiso(UppercaseModel):
 	# La clave compuesta identifica un permiso por perfil y por ruta.
-	codigo_perfil_permiso = models.IntegerField()
-	codigo_ruta_permiso = models.IntegerField()
+	codigo_perfil_permiso = models.BigIntegerField()
+	codigo_ruta_permiso = models.BigIntegerField()
 	consultar = models.CharField(max_length=1)
 	insertar = models.CharField(max_length=1)
 	modificar = models.CharField(max_length=1)
@@ -120,7 +138,7 @@ class Permiso(models.Model):
 		]
 
 
-class Marca(models.Model):
+class Marca(UppercaseModel):
 	# Fabricante de un reloj o de otro producto vendido.
 	codigo_marca = models.AutoField(primary_key=True)
 	nombre_marca = models.CharField(max_length=20)
@@ -129,7 +147,7 @@ class Marca(models.Model):
 		db_table = 'marcas'
 
 
-class TipoProducto(models.Model):
+class TipoProducto(UppercaseModel):
 	# Categoría de un producto: reloj, repuesto, accesorio, etc.
 	codigo_tipo_producto = models.AutoField(primary_key=True)
 	nombre_tipo_producto = models.CharField(max_length=40)
@@ -138,12 +156,12 @@ class TipoProducto(models.Model):
 		db_table = 'tipo_productos'
 
 
-class Producto(models.Model):
+class Producto(UppercaseModel):
 	# Artículo que puede venderse y, opcionalmente, controlar inventario.
 	codigo_producto = models.AutoField(primary_key=True)
 	nombre_producto = models.CharField(max_length=40)
-	codigo_marca = models.IntegerField()
-	codigo_tipo_producto = models.IntegerField()
+	codigo_marca = models.BigIntegerField()
+	codigo_tipo_producto = models.BigIntegerField()
 	modelo_producto = models.CharField(max_length=15, blank=True, null=True)
 	precio_venta_producto = models.DecimalField(max_digits=10, decimal_places=2)
 	costo_producto = models.DecimalField(max_digits=10, decimal_places=2)
@@ -164,7 +182,7 @@ class Producto(models.Model):
 		]
 
 
-class MetodoPago(models.Model):
+class MetodoPago(UppercaseModel):
 	# Forma en la que se paga una venta.
 	codigo_metodo_pago = models.AutoField(primary_key=True)
 	nombre_metodo_pago = models.CharField(max_length=30)
@@ -173,24 +191,24 @@ class MetodoPago(models.Model):
 		db_table = 'metodos_pago'
 
 
-class Venta(models.Model):
+class Venta(UppercaseModel):
 	# Cabecera de una factura: cliente, empleado, fecha, total y pago.
 	codigo_venta = models.AutoField(primary_key=True)
-	identificacion_cliente_venta = models.IntegerField()
-	identificacion_empleado_venta = models.IntegerField()
+	identificacion_cliente_venta = models.BigIntegerField()
+	identificacion_empleado_venta = models.BigIntegerField()
 	total_venta = models.DecimalField(max_digits=10, decimal_places=2)
 	fecha_venta = models.DateTimeField()
-	codigo_metodo_pago = models.IntegerField()
+	codigo_metodo_pago = models.BigIntegerField()
 
 	class Meta:
 		db_table = 'ventas'
 
 
-class DetalleVenta(models.Model):
+class DetalleVenta(UppercaseModel):
 	# Línea individual de una venta: producto, cantidad y precio aplicado.
 	codigo_detalle_venta = models.AutoField(primary_key=True)
-	codigo_venta = models.IntegerField()
-	codigo_producto = models.IntegerField()
+	codigo_venta = models.BigIntegerField()
+	codigo_producto = models.BigIntegerField()
 	cantidad_producto = models.IntegerField()
 	precio_unitario_producto = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -198,7 +216,7 @@ class DetalleVenta(models.Model):
 		db_table = 'detalle_ventas'
 
 
-class TipoServicio(models.Model):
+class TipoServicio(UppercaseModel):
 	# Catálogo de trabajos técnicos que puede realizar el taller.
 	codigo_tipo_servicio = models.AutoField(primary_key=True)
 	nombre_tipo_servicio = models.CharField(max_length=30)
@@ -207,7 +225,7 @@ class TipoServicio(models.Model):
 		db_table = 'tipos_servicio'
 
 
-class EstadoServicio(models.Model):
+class EstadoServicio(UppercaseModel):
 	# Estado actual de una reparación, por ejemplo recibido o terminado.
 	codigo_estado_servicio = models.AutoField(primary_key=True)
 	nombre_estado_reparacion = models.CharField(max_length=20)
@@ -216,11 +234,11 @@ class EstadoServicio(models.Model):
 		db_table = 'estados_servicio'
 
 
-class RelojCliente(models.Model):
+class RelojCliente(UppercaseModel):
 	# Reloj propiedad de un cliente que puede entrar a servicio técnico.
 	codigo_reloj_cliente = models.AutoField(primary_key=True)
-	codigo_cliente = models.IntegerField()
-	codigo_marca = models.IntegerField()
+	codigo_cliente = models.BigIntegerField()
+	codigo_marca = models.BigIntegerField()
 	modelo = models.CharField(max_length=15)
 	descripcion_reloj = models.CharField(max_length=200, blank=True, null=True)
 
@@ -228,14 +246,14 @@ class RelojCliente(models.Model):
 		db_table = 'relojes_cliente'
 
 
-class Servicio(models.Model):
+class Servicio(UppercaseModel):
 	# Orden de reparación asociada a un reloj y a un técnico.
 	codigo_servicio = models.AutoField(primary_key=True)
-	codigo_tecnico = models.IntegerField()
-	codigo_tipo_servicio = models.IntegerField()
-	codigo_estado_servicio = models.IntegerField()
-	codigo_reloj_cliente = models.IntegerField()
-	codigo_detalle_venta = models.IntegerField(blank=True, null=True)
+	codigo_tecnico = models.BigIntegerField()
+	codigo_tipo_servicio = models.BigIntegerField()
+	codigo_estado_servicio = models.BigIntegerField()
+	codigo_reloj_cliente = models.BigIntegerField()
+	codigo_detalle_venta = models.BigIntegerField(blank=True, null=True)
 	fecha_servicio = models.DateTimeField()
 	descripcion_falla = models.CharField(max_length=500)
 

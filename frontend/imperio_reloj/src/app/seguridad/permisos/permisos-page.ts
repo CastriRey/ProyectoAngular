@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavComponent } from '../../shared/nav/nav.component';
 import { Permiso, Perfil, Ruta } from '../security.types';
 import { SecurityService } from '../security.service';
+import { apiErrorMessage, formValidationMessage } from '../../shared/form-errors';
 
 @Component({
   selector: 'app-permisos-page',
@@ -26,8 +27,8 @@ export class PermisosPage {
   protected readonly editandoId = signal<number | null>(null);
   protected readonly guardando = signal(false);
   protected readonly form = this.formBuilder.nonNullable.group({
-    codigo_perfil_permiso: [0, Validators.min(1)],
-    codigo_ruta_permiso: [0, Validators.min(1)],
+    codigo_perfil_permiso: [0, [Validators.required, Validators.min(1)]],
+    codigo_ruta_permiso: [0, [Validators.required, Validators.min(1)]],
     consultar: ['S' as 'S' | 'N', Validators.required],
     insertar: ['N' as 'S' | 'N', Validators.required],
     modificar: ['N' as 'S' | 'N', Validators.required],
@@ -67,10 +68,10 @@ export class PermisosPage {
   }
 
   protected guardar(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set(formValidationMessage(this.form)); return; }
     this.guardando.set(true);
     const request = this.editandoId() === null ? this.service.crearPermiso(this.form.getRawValue()) : this.service.actualizarPermiso(this.editandoId()!, this.form.getRawValue());
-    request.subscribe({ next: () => this.cancelar(), error: () => { this.error.set('No se pudo guardar el permiso.'); this.guardando.set(false); } });
+    request.subscribe({ next: () => this.cancelar(), error: (respuesta) => { this.error.set(apiErrorMessage(respuesta.error, 'No se pudo guardar el permiso.')); this.guardando.set(false); } });
   }
 
   protected eliminar(permiso: Permiso): void {

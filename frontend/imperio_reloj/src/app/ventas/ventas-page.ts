@@ -3,6 +3,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
 
 import { Cliente } from '../clientes/cliente';
 import { Empleado } from '../empleados/empleado';
@@ -135,7 +136,7 @@ export class VentasPage {
         this.form.controls.identificacion_cliente_venta.markAsTouched();
         this.form.controls.identificacion_empleado_venta.markAsTouched();
         this.form.controls.codigo_metodo_pago.markAsTouched();
-        this.error.set('Selecciona el cliente, el empleado y el método de pago.');
+        this.error.set(formValidationMessage(this.form));
       } else {
         this.error.set('Agrega al menos un producto o servicio a la venta.');
       }
@@ -154,7 +155,7 @@ export class VentasPage {
       },
       error: (respuesta) => {
         const detalle = respuesta.error && typeof respuesta.error === 'object' ? Object.values(respuesta.error).flat().join(' ') : '';
-        this.error.set(detalle || `No se pudo guardar la venta (${respuesta.status || 'sin respuesta del servidor'}).`);
+        this.error.set(apiErrorMessage(respuesta.error, `No se pudo guardar la venta (${respuesta.status || 'sin respuesta del servidor'}).`));
         this.guardando.set(false);
       },
     });
