@@ -9,6 +9,7 @@ import { SecurityService } from '../seguridad/security.service';
 import { Perfil } from '../seguridad/security.types';
 import { forkJoin } from 'rxjs';
 import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
+import { PermissionService } from '../auth/permission.service';
 
 @Component({
   selector: 'app-empleados-page',
@@ -22,6 +23,7 @@ export class EmpleadosPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly securityService = inject(SecurityService);
+  protected readonly permissionService = inject(PermissionService);
 
   protected readonly empleados = signal<Empleado[]>([]);
   protected readonly perfiles = signal<Perfil[]>([]);

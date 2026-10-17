@@ -6,6 +6,7 @@ import { NavComponent } from '../shared/nav/nav.component';
 import { CatalogService } from './catalog.service';
 import { CatalogoConfig, CatalogoRegistro } from './catalog.types';
 import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
+import { PermissionService } from '../auth/permission.service';
 
 // Crear componente de Angular llamao CatalogPage, que es el encargado de mostrar la lista de registros
 // de un catálogo, y permitir crear, editar y eliminar registros.
@@ -24,6 +25,11 @@ export class CatalogPage {
   private readonly route = inject(ActivatedRoute);
   // Para navegar a otras rutas, necesitamos una instancia de Router
   private readonly router = inject(Router);
+  protected readonly permissionService = inject(PermissionService);
+
+  protected puede(action: 'consultar' | 'insertar' | 'modificar' | 'eliminar'): boolean {
+    return this.permissionService.puede(`/${this.config.recurso}/`, action);
+  }
 
   protected readonly config: CatalogoConfig = this.route.snapshot.data['catalogo'];
   protected readonly registros = signal<CatalogoRegistro[]>([]);

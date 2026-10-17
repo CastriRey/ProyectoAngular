@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
+import { PermissionService } from '../auth/permission.service';
 
 @Component({
   selector: 'app-login-page',
@@ -14,6 +15,7 @@ export class LoginPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly permissionService = inject(PermissionService);
 
   protected readonly enviando = signal(false);
   protected readonly error = signal('');
@@ -35,8 +37,10 @@ export class LoginPage {
     this.enviando.set(true);
     this.authService.iniciarSesion(this.loginForm.getRawValue()).subscribe({
       next: () => {
-        // Después de guardar los tokens, Angular navega al dashboard protegido.
-        void this.router.navigate(['/dashboard']);
+        this.permissionService.tieneAlgunaRutaConsultable().subscribe({
+          next: (tieneAcceso) => void this.router.navigate([tieneAcceso ? '/dashboard' : '/sin-permisos']),
+          error: () => void this.router.navigate(['/sin-permisos']),
+        });
       },
       error: (respuesta) => {
         this.error.set(respuesta.error?.error ?? 'No se pudo iniciar sesión.');

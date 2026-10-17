@@ -6,7 +6,7 @@
       <h1>Gestión de Permisos</h1>
       <p>Administra los accesos y privilegios del sistema.</p>
     </div>
-    <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-key" aria-hidden="true"></i> Nuevo permiso</button>
+    @if (puede('insertar')) { <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-key" aria-hidden="true"></i> Nuevo permiso</button> }
   </header>
 
   @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
@@ -30,9 +30,9 @@
   }
 
   <!-- El filtro queda preparado para conectarlo a una signal en el siguiente paso. -->
-  <section class="security-search-card" aria-label="Buscar permisos">
-    <label for="buscar-permisos">Buscar por perfil o ruta</label>
-    <input id="buscar-permisos" type="search" placeholder="Escribe un perfil o ruta">
+  <section class="security-search-card legacy-search-card" aria-label="Buscar permisos">
+    <div class="search-box-icon"><i class="bi bi-search" aria-hidden="true"></i></div>
+    <input id="buscar-permisos" type="search" placeholder="Buscar por perfil o ruta..." (input)="actualizarBusqueda($event)">
   </section>
 
   <!-- Cada fila representará la matriz CRUD de un perfil sobre una ruta. -->
@@ -51,8 +51,8 @@
         </tr>
       </thead>
       <tbody>
-        @for (permiso of permisos(); track permiso.id) {
-          <tr><td>{{ permiso.codigo_perfil_permiso }}</td><td>{{ permiso.codigo_ruta_permiso }}</td><td>{{ permiso.consultar }}</td><td>{{ permiso.insertar }}</td><td>{{ permiso.modificar }}</td><td>{{ permiso.eliminar }}</td><td class="actions-cell"><button class="edit-action" type="button" (click)="editar(permiso)" aria-label="Editar permiso"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(permiso)" aria-label="Eliminar permiso"><i class="bi bi-trash" aria-hidden="true"></i></button></td></tr>
+        @for (permiso of permisosFiltrados(); track permiso.id) {
+          <tr><td class="fw-semibold"><i class="bi bi-person-badge text-primary" aria-hidden="true"></i> {{ nombrePerfil(permiso.codigo_perfil_permiso) }}</td><td><code>{{ urlRuta(permiso.codigo_ruta_permiso) }}</code></td><td><span class="permission-badge permission-consultar"><i class="bi bi-eye" aria-hidden="true"></i> {{ permiso.consultar === 'S' ? 'Sí' : 'No' }}</span></td><td><span class="permission-badge permission-insertar"><i class="bi bi-check-circle" aria-hidden="true"></i> {{ permiso.insertar === 'S' ? 'Sí' : 'No' }}</span></td><td><span class="permission-badge permission-modificar"><i class="bi bi-pencil" aria-hidden="true"></i> {{ permiso.modificar === 'S' ? 'Sí' : 'No' }}</span></td><td><span class="permission-badge permission-eliminar"><i class="bi bi-trash" aria-hidden="true"></i> {{ permiso.eliminar === 'S' ? 'Sí' : 'No' }}</span></td><td class="actions-cell">@if (puede('modificar')) { <button class="edit-action" type="button" (click)="editar(permiso)" aria-label="Editar permiso"><i class="bi bi-pencil-square" aria-hidden="true"></i></button> } @if (puede('eliminar')) { <button class="delete-action" type="button" (click)="eliminar(permiso)" aria-label="Eliminar permiso"><i class="bi bi-trash" aria-hidden="true"></i></button> }</td></tr>
         } @empty { <tr><td colspan="7">No hay permisos registrados.</td></tr> }
       </tbody>
     </table></div>

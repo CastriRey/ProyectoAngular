@@ -44,6 +44,15 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'imperio.authentication.EmpleadoJWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'imperio.permissions.RutaPermisoPermission',
+    ],
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

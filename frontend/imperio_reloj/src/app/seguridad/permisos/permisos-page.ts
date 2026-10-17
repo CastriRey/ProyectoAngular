@@ -6,6 +6,7 @@ import { NavComponent } from '../../shared/nav/nav.component';
 import { Permiso, Perfil, Ruta } from '../security.types';
 import { SecurityService } from '../security.service';
 import { apiErrorMessage, formValidationMessage } from '../../shared/form-errors';
+import { PermissionService } from '../../auth/permission.service';
 
 @Component({
   selector: 'app-permisos-page',
@@ -18,6 +19,7 @@ export class PermisosPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly permissionService = inject(PermissionService);
 
   protected readonly permisos = signal<Permiso[]>([]);
   protected readonly perfiles = signal<Perfil[]>([]);
@@ -26,6 +28,15 @@ export class PermisosPage {
   protected readonly formularioVisible = signal(false);
   protected readonly editandoId = signal<number | null>(null);
   protected readonly guardando = signal(false);
+  protected readonly busqueda = signal('');
+  protected readonly permisosFiltrados = () => {
+    const texto = this.busqueda().trim().toLowerCase();
+    return this.permisos().filter((permiso) => {
+      const perfil = this.perfiles().find((item) => item.codigo_perfil === permiso.codigo_perfil_permiso);
+      const ruta = this.rutas().find((item) => item.codigo_ruta === permiso.codigo_ruta_permiso);
+      return !texto || `${perfil?.nombre_perfil ?? ''} ${ruta?.url_ruta ?? ''}`.toLowerCase().includes(texto);
+    });
+  };
   protected readonly form = this.formBuilder.nonNullable.group({
     codigo_perfil_permiso: [0, [Validators.required, Validators.min(1)]],
     codigo_ruta_permiso: [0, [Validators.required, Validators.min(1)]],
@@ -48,6 +59,16 @@ export class PermisosPage {
     this.service.permisos().subscribe({ next: (items) => this.permisos.set(items), error: () => this.error.set('No se pudieron cargar los permisos.') });
     this.service.perfiles().subscribe({ next: (items) => this.perfiles.set(items), error: () => this.error.set('No se pudieron cargar los perfiles.') });
     this.service.rutas().subscribe({ next: (items) => this.rutas.set(items), error: () => this.error.set('No se pudieron cargar las rutas.') });
+  }
+
+  protected actualizarBusqueda(event: Event): void { this.busqueda.set((event.target as HTMLInputElement).value); }
+
+  protected nombrePerfil(id: number): string { return this.perfiles().find((perfil) => perfil.codigo_perfil === id)?.nombre_perfil ?? `Perfil ${id}`; }
+
+  protected urlRuta(id: number): string { return this.rutas().find((ruta) => ruta.codigo_ruta === id)?.url_ruta ?? `Ruta ${id}`; }
+
+  protected puede(action: 'consultar' | 'insertar' | 'modificar' | 'eliminar'): boolean {
+    return this.permissionService.puede('/seguridad/permisos/', action);
   }
 
   protected nuevo(): void {

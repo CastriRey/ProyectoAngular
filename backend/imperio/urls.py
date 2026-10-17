@@ -18,6 +18,7 @@ from .views import (
 	RelojClienteViewSet,
 	ServicioViewSet,
 	login_empleado,
+	mis_permisos,
 )
 
 
@@ -41,5 +42,6 @@ router.register('servicios', ServicioViewSet, basename='servicio')
 urlpatterns = [
 	# Esta ruta es pública porque se utiliza antes de tener un token.
 	path('login/', login_empleado),
+	path('mis-permisos/', mis_permisos),
 ]
 urlpatterns += router.urls

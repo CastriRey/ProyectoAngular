@@ -14,6 +14,7 @@ import { VentasPage } from './ventas/ventas-page';
 import { ServiciosPage } from './servicios/servicios-page';
 import { RelojesClientesPage } from './relojes-clientes/relojes-clientes-page';
 import { ModulePage } from './shared/module-page/module-page';
+import { NoPermissionsPage } from './auth/no-permissions-page';
 
 // Esta función evita repetir la configuración de todas las páginas del sistema.
 const modulo = (
@@ -61,6 +62,7 @@ export const routes: Routes = [
 	// La ruta inicial siempre muestra el formulario de autenticación.
 	{ path: '', redirectTo: 'login', pathMatch: 'full' },
 	{ path: 'login', component: LoginPage },
+	{ path: 'sin-permisos', component: NoPermissionsPage },
 	// El guard impide acceder al dashboard sin un token guardado.
 	{ path: 'dashboard', component: DashboardPage, canActivate: [authGuard] },
 	{ path: 'clientes', component: ClientesPage, canActivate: [authGuard] },

@@ -2,6 +2,7 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthService } from '../../auth/auth.service';
+import { PermissionService } from '../../auth/permission.service';
 
 @Component({
   selector: 'app-nav',
@@ -12,6 +13,7 @@ import { AuthService } from '../../auth/auth.service';
 export class NavComponent {
   // El servicio permite cerrar la sesión desde cualquier página que use este nav.
   protected readonly authService = inject(AuthService);
+  protected readonly permissionService = inject(PermissionService);
 
   // El nombre se obtiene de la sesión guardada después del login.
   protected readonly nombreUsuario = this.authService.obtenerNombreUsuario();
@@ -19,6 +21,14 @@ export class NavComponent {
   // Solo un menú puede estar abierto al mismo tiempo.
   protected readonly menuAbierto = signal<string | null>(null);
   protected readonly menuMovilAbierto = signal(false);
+
+  constructor() {
+    this.permissionService.obtenerPermisos().subscribe();
+  }
+
+  protected puede(path: string, action: 'consultar' | 'insertar' | 'modificar' | 'eliminar' = 'consultar'): boolean {
+    return this.permissionService.puede(path, action);
+  }
 
   protected alternarMenuMovil(event: Event): void {
     // El panel móvil es independiente de los desplegables de cada módulo.

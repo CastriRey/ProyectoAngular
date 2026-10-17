@@ -6,6 +6,7 @@ import { NavComponent } from '../../shared/nav/nav.component';
 import { Rol } from '../security.types';
 import { SecurityService } from '../security.service';
 import { apiErrorMessage, formValidationMessage } from '../../shared/form-errors';
+import { PermissionService } from '../../auth/permission.service';
 
 @Component({
   selector: 'app-roles-page',
@@ -18,6 +19,7 @@ export class RolesPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly permissionService = inject(PermissionService);
 
   protected readonly roles = signal<Rol[]>([]);
   protected readonly error = signal('');

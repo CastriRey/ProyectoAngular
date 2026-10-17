@@ -9,6 +9,7 @@ import { Empleado } from '../empleados/empleado';
 import { EmpleadosService } from '../empleados/empleados.service';
 import { forkJoin } from 'rxjs';
 import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
+import { PermissionService } from '../auth/permission.service';
 
 @Component({
   selector: 'app-clientes-page',
@@ -22,6 +23,7 @@ export class ClientesPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly empleadosService = inject(EmpleadosService);
+  protected readonly permissionService = inject(PermissionService);
 
   protected readonly clientes = signal<Cliente[]>([]);
   protected readonly empleados = signal<Empleado[]>([]);
@@ -50,10 +52,10 @@ export class ClientesPage {
   });
 
   constructor() {
-    this.cargarClientes();
     const id = this.route.snapshot.paramMap.get('id');
-    if (this.route.snapshot.url[0]?.path === 'nuevo') this.nuevo();
+    if (this.route.snapshot.url[0]?.path === 'nuevo') this.prepararNuevo();
     if (id) this.editandoId.set(Number(id));
+    this.cargarClientes();
   }
 
   protected cargarClientes(): void {
@@ -89,11 +91,15 @@ export class ClientesPage {
   }
 
   protected nuevo(): void {
+    this.prepararNuevo();
+    if (this.router.url !== '/clientes/nuevo') void this.router.navigate(['/clientes/nuevo']);
+  }
+
+  private prepararNuevo(): void {
     this.editandoId.set(null);
     this.form.reset({ identificacion_cliente: 0, nombre_cliente: '', primer_apellido_cliente: '', segundo_apellido_cliente: '', correo_cliente: '', telefono_cliente: '', identificacion_empleado: 0, comentarios: '' });
     this.form.controls.identificacion_cliente.enable();
     this.formularioVisible.set(true);
-    void this.router.navigate(['/clientes/nuevo']);
   }
 
   protected editar(cliente: Cliente): void {

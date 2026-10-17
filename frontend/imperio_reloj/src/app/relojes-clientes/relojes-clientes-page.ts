@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
+import { PermissionService } from '../auth/permission.service';
 
 import { NavComponent } from '../shared/nav/nav.component';
 import { ClienteOption, MarcaOption, RelojCliente } from './reloj-cliente';
@@ -19,6 +20,7 @@ export class RelojesClientesPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly permissionService = inject(PermissionService);
 
   protected readonly relojes = signal<RelojCliente[]>([]);
   protected readonly clientes = signal<ClienteOption[]>([]);

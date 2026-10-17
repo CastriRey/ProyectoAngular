@@ -5,12 +5,14 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
 import { LoginRequest, LoginResponse } from './auth.types';
+import { PermissionService } from './permission.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly permissionService = inject(PermissionService);
   private readonly loginUrl = 'http://127.0.0.1:8000/api/login/';
 
   // Envía las credenciales y guarda los tokens cuando Django responde correctamente.
@@ -25,6 +27,7 @@ export class AuthService {
           localStorage.setItem('user_name', respuesta.empleado.nombre);
           localStorage.setItem('user_primer_apellido', respuesta.empleado.primer_apellido);
           localStorage.setItem('user_correo', respuesta.empleado.correo);
+          localStorage.setItem('user_perfil', String(respuesta.empleado.perfil));
         }
       }),
     );
@@ -61,7 +64,9 @@ export class AuthService {
       localStorage.removeItem('user_name');
       localStorage.removeItem('user_primer_apellido');
       localStorage.removeItem('user_correo');
+      localStorage.removeItem('user_perfil');
     }
+    this.permissionService.limpiar();
     void this.router.navigate(['/login']);
   }
 }

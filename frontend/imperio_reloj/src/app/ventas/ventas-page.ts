@@ -2,8 +2,9 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
+import { PermissionService } from '../auth/permission.service';
 
 import { Cliente } from '../clientes/cliente';
 import { Empleado } from '../empleados/empleado';
@@ -24,6 +25,7 @@ export class VentasPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly permissionService = inject(PermissionService);
   private readonly authService = inject(AuthService);
 
   protected readonly ventas = signal<Venta[]>([]);
@@ -63,7 +65,14 @@ export class VentasPage {
 
   protected cargarDatos(): void {
     this.cargando.set(true);
-    forkJoin({ ventas: this.service.obtenerVentas(), clientes: this.service.obtenerClientes(), empleados: this.service.obtenerEmpleados(), productos: this.service.obtenerProductos(), metodosPago: this.service.obtenerMetodosPago(), servicios: this.service.obtenerServicios() }).subscribe({
+    forkJoin({
+      ventas: this.service.obtenerVentas(),
+      clientes: this.service.obtenerClientes().pipe(catchError(() => of([] as Cliente[]))),
+      empleados: this.service.obtenerEmpleados().pipe(catchError(() => of([] as Empleado[]))),
+      productos: this.service.obtenerProductos().pipe(catchError(() => of([] as Producto[]))),
+      metodosPago: this.service.obtenerMetodosPago().pipe(catchError(() => of([] as MetodoPagoOption[]))),
+      servicios: this.service.obtenerServicios().pipe(catchError(() => of([] as ServicioRelacionado[]))),
+    }).subscribe({
       next: (datos) => { this.ventas.set(datos.ventas); this.clientes.set(datos.clientes); this.empleados.set(datos.empleados); this.productos.set(datos.productos); this.metodosPago.set(datos.metodosPago); this.servicios.set(datos.servicios); this.asignarEmpleadoActual(datos.empleados); this.cargando.set(false); },
       error: () => { this.error.set('No se pudieron cargar las ventas y sus opciones.'); this.cargando.set(false); },
     });

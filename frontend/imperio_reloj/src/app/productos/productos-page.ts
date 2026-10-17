@@ -8,6 +8,7 @@ import { NavComponent } from '../shared/nav/nav.component';
 import { MarcaOption, Producto, TipoProductoOption } from './producto';
 import { ProductosService } from './productos.service';
 import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
+import { PermissionService } from '../auth/permission.service';
 
 @Component({
   selector: 'app-productos-page',
@@ -20,6 +21,7 @@ export class ProductosPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly permissionService = inject(PermissionService);
 
   protected readonly productos = signal<Producto[]>([]);
   protected readonly marcas = signal<MarcaOption[]>([]);

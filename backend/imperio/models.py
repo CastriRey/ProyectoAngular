@@ -118,6 +118,11 @@ class Ruta(UppercaseModel):
 	class Meta:
 		db_table = 'rutas'
 
+	def save(self, *args, **kwargs):
+		self.nombre_ruta = self.nombre_ruta.upper() if self.nombre_ruta else self.nombre_ruta
+		self.url_ruta = self.url_ruta.lower() if self.url_ruta else self.url_ruta
+		return models.Model.save(self, *args, **kwargs)
+
 
 class Permiso(UppercaseModel):
 	# La clave compuesta identifica un permiso por perfil y por ruta.

@@ -6,6 +6,7 @@ import { NavComponent } from '../../shared/nav/nav.component';
 import { Ruta } from '../security.types';
 import { SecurityService } from '../security.service';
 import { apiErrorMessage, formValidationMessage } from '../../shared/form-errors';
+import { PermissionService } from '../../auth/permission.service';
 
 @Component({
   selector: 'app-rutas-page',
@@ -18,12 +19,18 @@ export class RutasPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly permissionService = inject(PermissionService);
 
   protected readonly rutas = signal<Ruta[]>([]);
   protected readonly error = signal('');
   protected readonly formularioVisible = signal(false);
   protected readonly editandoId = signal<number | null>(null);
   protected readonly guardando = signal(false);
+  protected readonly busqueda = signal('');
+  protected readonly rutasFiltradas = () => {
+    const texto = this.busqueda().trim().toLowerCase();
+    return this.rutas().filter((ruta) => !texto || `${ruta.nombre_ruta} ${ruta.url_ruta}`.toLowerCase().includes(texto));
+  };
   protected readonly form = this.formBuilder.nonNullable.group({
     nombre_ruta: ['', Validators.required],
     url_ruta: ['', Validators.required],
@@ -42,6 +49,12 @@ export class RutasPage {
   }
 
   protected cargar(): void { this.service.rutas().subscribe({ next: (items) => this.rutas.set(items), error: () => this.error.set('No se pudieron cargar las rutas.') }); }
+
+  protected actualizarBusqueda(event: Event): void { this.busqueda.set((event.target as HTMLInputElement).value); }
+
+  protected puede(action: 'consultar' | 'insertar' | 'modificar' | 'eliminar'): boolean {
+    return this.permissionService.puede('/seguridad/rutas/', action);
+  }
 
   protected nuevo(): void {
     this.editandoId.set(null);

@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import check_password
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -56,6 +56,7 @@ def login_empleado(request):
 
 	# RefreshToken genera un token corto de acceso y otro de renovación.
 	refresh = RefreshToken.for_user(empleado)
+	refresh['perfil'] = empleado.codigo_perfil_empleado
 	return Response({
 		'mensaje': 'Login exitoso',
 		'empleado': {
@@ -68,6 +69,26 @@ def login_empleado(request):
 		'access': str(refresh.access_token),
 		'refresh': str(refresh),
 	})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def mis_permisos(request):
+	perfil = request.user.perfil
+	if perfil == 1:
+		return Response({'perfil': perfil, 'acceso_total': True, 'permisos': {}})
+
+	permisos = {}
+	for permiso in Permiso.objects.filter(codigo_perfil_permiso=perfil):
+		ruta = Ruta.objects.filter(codigo_ruta=permiso.codigo_ruta_permiso).first()
+		if ruta:
+			permisos[ruta.url_ruta] = {
+				'consultar': permiso.consultar.strip().upper(),
+				'insertar': permiso.insertar.strip().upper(),
+				'modificar': permiso.modificar.strip().upper(),
+				'eliminar': permiso.eliminar.strip().upper(),
+			}
+	return Response({'perfil': perfil, 'acceso_total': False, 'permisos': permisos})
 
 
 class ClienteViewSet(viewsets.ModelViewSet):

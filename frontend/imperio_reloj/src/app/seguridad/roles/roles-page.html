@@ -6,7 +6,7 @@
       <h1>Gestión de Roles</h1>
       <p>Administra los roles del sistema.</p>
     </div>
-    <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-person-gear" aria-hidden="true"></i> Nuevo rol</button>
+    @if (permissionService.puede('/seguridad/roles/', 'insertar')) { <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-person-gear" aria-hidden="true"></i> Nuevo rol</button> }
   </header>
 
   @if (error()) { <p class="alert" role="alert">{{ error() }}</p> }
@@ -38,7 +38,7 @@
           <tr>
             <td>{{ rol.codigo_rol }}</td>
             <td><strong>{{ rol.nombre_rol }}</strong></td>
-            <td class="actions-cell"><button class="edit-action" type="button" (click)="editar(rol)" aria-label="Editar rol"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(rol)" aria-label="Eliminar rol"><i class="bi bi-trash" aria-hidden="true"></i></button></td>
+            <td class="actions-cell">@if (permissionService.puede('/seguridad/roles/', 'modificar')) { <button class="edit-action" type="button" (click)="editar(rol)" aria-label="Editar rol"><i class="bi bi-pencil-square" aria-hidden="true"></i></button> } @if (permissionService.puede('/seguridad/roles/', 'eliminar')) { <button class="delete-action" type="button" (click)="eliminar(rol)" aria-label="Eliminar rol"><i class="bi bi-trash" aria-hidden="true"></i></button> }</td>
           </tr>
         } @empty { <tr><td colspan="3">No hay roles registrados.</td></tr> }
       </tbody>

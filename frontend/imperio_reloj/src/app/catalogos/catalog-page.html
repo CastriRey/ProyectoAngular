@@ -7,7 +7,7 @@
       <p>{{ config.descripcion }}</p>
     </div>
     @if (!formularioVisible()) {
-      <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-plus-circle" aria-hidden="true"></i> Nuevo registro</button>
+      @if (puede('insertar')) { <button class="button button-success" type="button" (click)="nuevo()"><i class="bi bi-plus-circle" aria-hidden="true"></i> Nuevo registro</button> }
     }
   </header>
 
@@ -48,7 +48,7 @@
                 <tr>
                   <td><strong>{{ registro[config.idKey] }}</strong></td>
                   <td>{{ registro[config.nameKey] }}</td>
-                  <td class="actions-cell"><button class="edit-action" type="button" (click)="editar(registro)" [attr.aria-label]="'Editar ' + config.titulo"><i class="bi bi-pencil-square" aria-hidden="true"></i></button><button class="delete-action" type="button" (click)="eliminar(registro)" [attr.aria-label]="'Eliminar ' + config.titulo"><i class="bi bi-trash" aria-hidden="true"></i></button></td>
+                  <td class="actions-cell">@if (puede('modificar')) { <button class="edit-action" type="button" (click)="editar(registro)" [attr.aria-label]="'Editar ' + config.titulo"><i class="bi bi-pencil-square" aria-hidden="true"></i></button> } @if (puede('eliminar')) { <button class="delete-action" type="button" (click)="eliminar(registro)" [attr.aria-label]="'Eliminar ' + config.titulo"><i class="bi bi-trash" aria-hidden="true"></i></button> }</td>
                 </tr>
               } @empty { <tr><td colspan="3">No hay registros que mostrar.</td></tr> }
             </tbody>
