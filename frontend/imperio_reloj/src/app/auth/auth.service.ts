@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
-import { LoginRequest, LoginResponse } from './auth.types';
+import { LoginRequest, LoginResponse, TokenRefreshResponse } from './auth.types';
 import { PermissionService } from './permission.service';
 
 @Injectable({ providedIn: 'root' })
@@ -12,8 +12,28 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly document = inject(DOCUMENT);
   private readonly permissionService = inject(PermissionService);
   private readonly loginUrl = 'http://127.0.0.1:8000/api/login/';
+  private readonly inactivityLimit = 10 * 60 * 1000;
+  private activityTimer: number | undefined;
+  private lastActivityWrite = 0;
+
+  constructor() {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    const registerActivity = (): void => {
+      if (!localStorage.getItem('access_token')) return;
+      const now = Date.now();
+      if (now - this.lastActivityWrite < 30_000) return;
+      this.lastActivityWrite = now;
+      localStorage.setItem('last_activity', String(now));
+    };
+    ['click', 'keydown', 'pointerdown', 'touchstart'].forEach((eventName) => {
+      this.document.addEventListener(eventName, registerActivity, { passive: true });
+    });
+    this.activityTimer = window.setInterval(() => this.verificarInactividad(), 30_000);
+  }
 
   // Envía las credenciales y guarda los tokens cuando Django responde correctamente.
   iniciarSesion(datos: LoginRequest): Observable<LoginResponse> {
@@ -28,7 +48,17 @@ export class AuthService {
           localStorage.setItem('user_primer_apellido', respuesta.empleado.primer_apellido);
           localStorage.setItem('user_correo', respuesta.empleado.correo);
           localStorage.setItem('user_perfil', String(respuesta.empleado.perfil));
+          localStorage.setItem('last_activity', String(Date.now()));
         }
+      }),
+    );
+  }
+
+  renovarAccessToken(): Observable<TokenRefreshResponse> {
+    const refresh = isPlatformBrowser(this.platformId) ? localStorage.getItem('refresh_token') : null;
+    return this.http.post<TokenRefreshResponse>('http://127.0.0.1:8000/api/token/refresh/', { refresh }).pipe(
+      tap((respuesta) => {
+        if (isPlatformBrowser(this.platformId)) localStorage.setItem('access_token', respuesta.access);
       }),
     );
   }
@@ -65,8 +95,16 @@ export class AuthService {
       localStorage.removeItem('user_primer_apellido');
       localStorage.removeItem('user_correo');
       localStorage.removeItem('user_perfil');
+      localStorage.removeItem('last_activity');
     }
     this.permissionService.limpiar();
     void this.router.navigate(['/login']);
+  }
+
+  private verificarInactividad(): void {
+    const lastActivity = Number(localStorage.getItem('last_activity'));
+    if (localStorage.getItem('access_token') && (!lastActivity || Date.now() - lastActivity > this.inactivityLimit)) {
+      this.cerrarSesion();
+    }
   }
 }

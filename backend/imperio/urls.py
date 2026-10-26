@@ -1,5 +1,6 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import (
 	ClienteViewSet,
@@ -42,6 +43,7 @@ router.register('servicios', ServicioViewSet, basename='servicio')
 urlpatterns = [
 	# Esta ruta es pública porque se utiliza antes de tener un token.
 	path('login/', login_empleado),
+	path('token/refresh/', TokenRefreshView.as_view()),
 	path('mis-permisos/', mis_permisos),
 ]
 urlpatterns += router.urls

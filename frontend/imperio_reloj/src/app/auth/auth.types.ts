@@ -16,3 +16,8 @@ export interface LoginResponse {
     perfil: number;
   };
 }
+
+export interface TokenRefreshResponse {
+  access: string;
+  refresh?: string;
+}

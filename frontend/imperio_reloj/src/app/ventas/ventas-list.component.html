@@ -1,0 +1,11 @@
+<header class="page-header">
+  <div><h1><i class="bi bi-receipt" aria-hidden="true"></i> Gestión de Ventas</h1><p>Visualiza todas las ventas realizadas.</p></div>
+  <button class="button button-success" type="button" (click)="nuevaVenta.emit()"><i class="bi bi-plus-circle" aria-hidden="true"></i> Nueva venta</button>
+</header>
+
+<section class="sales-search-card"><div class="sales-search-box"><span class="sales-search-icon"><i class="bi bi-search" aria-hidden="true"></i></span><input type="search" placeholder="Buscar por código, cliente, empleado o fecha..." [value]="busqueda" (input)="busquedaChange.emit(($any($event.target)).value)"></div></section>
+@if (cargando) {
+  <section class="content-card empty-state">Cargando ventas...</section>
+} @else {
+  <section class="content-card list-card"><div class="table-wrapper"><table class="data-table sales-table"><thead><tr><th># Venta</th><th>Cliente</th><th>Empleado</th><th>Fecha</th><th>Total</th><th>Método de pago</th><th>Acciones</th></tr></thead><tbody>@for (venta of ventas; track venta.codigo_venta) { <tr><td><strong>{{ venta.codigo_venta }}</strong></td><td>{{ venta.cliente_nombre }}</td><td>{{ venta.empleado_nombre }}</td><td>{{ venta.fecha_venta | date:'dd/MM/yyyy' }}</td><td id="Venta-color">${{ venta.total_venta | number:'1.2-2' }}</td><td>{{ venta.metodo_pago_nombre }}</td><td class="actions-cell"><button class="view-action" type="button" (click)="verVenta.emit(venta)" aria-label="Ver venta"><i class="bi bi-eye" aria-hidden="true"></i></button></td></tr> } @empty { <tr><td colspan="7">No hay ventas registradas.</td></tr> }</tbody></table></div></section>
+}

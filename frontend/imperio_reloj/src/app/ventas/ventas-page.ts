@@ -1,6 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, inject, signal, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { apiErrorMessage, formValidationMessage } from '../shared/form-errors';
@@ -13,12 +12,16 @@ import { NavComponent } from '../shared/nav/nav.component';
 import { AuthService } from '../auth/auth.service';
 import { ServicioRelacionado, Venta, VentaLinea } from './venta';
 import { MetodoPagoOption, VentasService } from './ventas.service';
+import { VentaFormComponent } from './venta-form.component';
+import { VentaInvoiceComponent } from './venta-invoice.component';
+import { VentasListComponent } from './ventas-list.component';
 
 @Component({
   selector: 'app-ventas-page',
-  imports: [NavComponent, ReactiveFormsModule, DecimalPipe, DatePipe],
+  imports: [NavComponent, VentasListComponent, VentaFormComponent, VentaInvoiceComponent],
   templateUrl: './ventas-page.html',
   styleUrl: './ventas-page.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class VentasPage {
   private readonly service = inject(VentasService);
@@ -36,6 +39,8 @@ export class VentasPage {
   protected readonly servicios = signal<ServicioRelacionado[]>([]);
   protected readonly serviciosSeleccionados = signal<number[]>([]);
   protected readonly lineas = signal<VentaLinea[]>([]);
+  protected readonly productoSeleccionado = signal<Producto | null>(null);
+  protected readonly cantidadSeleccionada = signal(1);
   protected readonly ventaSeleccionada = signal<Venta | null>(null);
   protected readonly cargando = signal(true);
   protected readonly guardando = signal(false);
@@ -48,6 +53,7 @@ export class VentasPage {
     if (!texto) return this.ventas();
     return this.ventas().filter((venta) => `${venta.codigo_venta} ${venta.cliente_nombre ?? ''} ${venta.empleado_nombre ?? ''} ${venta.metodo_pago_nombre ?? ''} ${venta.fecha_venta}`.toLowerCase().includes(texto));
   });
+  protected readonly productoLookup = (id: number): Producto | undefined => this.productoDeVenta(id);
   protected readonly form = this.formBuilder.nonNullable.group({
     identificacion_cliente_venta: [0, [Validators.required, Validators.min(1)]],
     identificacion_empleado_venta: [0, [Validators.required, Validators.min(1)]],
@@ -121,13 +127,42 @@ export class VentasPage {
     if (!producto) return;
     const cantidad = this.form.controls.cantidad_producto.value;
     const existente = this.lineas().find((linea) => linea.codigo_producto === id);
+    const cantidadFinal = (existente?.cantidad_producto ?? 0) + cantidad;
+    if (producto.controla_stock === 'S' && cantidadFinal > producto.stock_disponible_producto) {
+      this.error.set(`No hay stock suficiente de "${producto.nombre_producto}". Disponible: ${producto.stock_disponible_producto} unidad(es).`);
+      return;
+    }
+    this.error.set('');
     if (existente) this.lineas.update((lineas) => lineas.map((linea) => linea.codigo_producto === id ? { ...linea, cantidad_producto: linea.cantidad_producto + cantidad } : linea));
     else this.lineas.update((lineas) => [...lineas, { codigo_producto: id, nombre_producto: producto.nombre_producto, cantidad_producto: cantidad, precio_unitario_producto: Number(producto.precio_venta_producto), codigo_venta: 0 }]);
     this.form.controls.codigo_producto.reset(0);
     this.form.controls.cantidad_producto.reset(1);
+    this.productoSeleccionado.set(null);
+    this.cantidadSeleccionada.set(1);
   }
 
   protected quitarProducto(linea: VentaLinea): void { this.lineas.update((lineas) => lineas.filter((actual) => actual.codigo_producto !== linea.codigo_producto)); }
+
+  protected actualizarProductoSeleccionado(): void {
+    this.productoSeleccionado.set(this.productos().find((producto) => producto.codigo_producto === this.form.controls.codigo_producto.value) ?? null);
+    this.error.set('');
+  }
+
+  protected actualizarCantidad(event: Event): void {
+    this.cantidadSeleccionada.set(Number((event.target as HTMLInputElement).value) || 0);
+  }
+
+  protected stockRestante(): number | null {
+    const producto = this.productoSeleccionado();
+    if (!producto || producto.controla_stock !== 'S') return null;
+    const agregado = this.lineas().find((linea) => linea.codigo_producto === producto.codigo_producto)?.cantidad_producto ?? 0;
+    return producto.stock_disponible_producto - agregado;
+  }
+
+  protected stockInsuficiente(): boolean {
+    const restante = this.stockRestante();
+    return restante !== null && this.cantidadSeleccionada() > restante;
+  }
 
   protected completarVenta(): void {
     this.guardar();

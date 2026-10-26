@@ -181,9 +181,42 @@ class VentaSerializer(serializers.ModelSerializer):
 		if not lineas and not servicios:
 			raise serializers.ValidationError({'lineas': 'La venta debe incluir al menos un producto o servicio.'})
 		with transaction.atomic():
+			cantidades = {}
+			for linea in lineas:
+				try:
+					producto_id = int(linea['codigo_producto'])
+					cantidad = int(linea['cantidad_producto'])
+				except (KeyError, TypeError, ValueError) as error:
+					raise serializers.ValidationError({'lineas': 'Cada producto debe incluir un código y una cantidad válida.'}) from error
+				if cantidad < 1:
+					raise serializers.ValidationError({'lineas': 'La cantidad de cada producto debe ser mayor que cero.'})
+				cantidades[producto_id] = cantidades.get(producto_id, 0) + cantidad
+
+			productos = {
+				producto.codigo_producto: producto
+				for producto in Producto.objects.select_for_update().filter(codigo_producto__in=cantidades)
+			}
+			for producto_id, cantidad in cantidades.items():
+				producto = productos.get(producto_id)
+				if not producto:
+					raise serializers.ValidationError({'lineas': f'El producto {producto_id} no existe.'})
+				if producto.controla_stock == 'S' and cantidad > producto.stock_disponible_producto:
+					raise serializers.ValidationError({
+						'lineas': (
+							f'El producto "{producto.nombre_producto}" solo tiene '
+							f'{producto.stock_disponible_producto} unidades disponibles; '
+							f'no se pueden vender {cantidad}.'
+						),
+					})
+
 			venta = Venta.objects.create(**validated_data)
 			for linea in lineas:
 				DetalleVenta.objects.create(codigo_venta=venta.codigo_venta, **linea)
+			for producto_id, cantidad in cantidades.items():
+				producto = productos[producto_id]
+				if producto.controla_stock == 'S':
+					producto.stock_disponible_producto -= cantidad
+					producto.save(update_fields=('stock_disponible_producto', 'ultima_actualizacion_producto'))
 			estado_entregado = EstadoServicio.objects.filter(nombre_estado_reparacion__icontains='ENTREG').first()
 			estados_finales = EstadoServicio.objects.filter(nombre_estado_reparacion__icontains='FINAL').values('codigo_estado_servicio')
 			for servicio_id in servicios:

@@ -1,12 +1,58 @@
 <app-nav />
 
-<main>
-  <h1>Dashboard general</h1>
-  <p>Bienvenido, {{ nombre }}.</p>
-  <p>Esta es la página principal del sistema.</p>
+<main class="dashboard-main">
+  <header class="dashboard-header">
+    <div>
+      <h1><i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard general</h1>
+      <p>Resumen operativo de clientes, ventas, inventario y reparaciones · <span>Periodo: {{ fechaInicio() }} al {{ fechaFin() }}</span></p>
+    </div>
+  </header>
 
-  <nav>
-    <a routerLink="/clientes">Ver clientes</a>
-    <button type="button" (click)="authService.cerrarSesion()">Cerrar sesión</button>
-  </nav>
+  @if (error()) { <p class="dashboard-alert error" role="alert">{{ error() }}</p> }
+  @if (cargando()) {
+    <section class="section-card loading-state">Cargando información del dashboard...</section>
+  } @else {
+    <section class="summary-strip">
+      <h2><i class="bi bi-graph-up-arrow" aria-hidden="true"></i> Resumen del periodo</h2>
+      <p>Un vistazo rápido al desempeño del negocio durante el rango seleccionado.</p>
+      <div class="summary-grid">
+        <div><span>Ingresos por ventas</span><strong>${{ formatearMoneda(ingresos()) }}</strong></div>
+        <div><span>Ventas realizadas</span><strong>{{ ventasPeriodo().length }}</strong></div>
+        <div><span>Reparaciones pendientes</span><strong>{{ pendientes() }}</strong></div>
+        <div><span>Clientes totales</span><strong>{{ clientes().length }}</strong></div>
+      </div>
+    </section>
+
+    <section class="section-card filter-card">
+      <div class="filter-field"><label for="fecha-inicio"><i class="bi bi-calendar-event"></i> Fecha inicio</label><input id="fecha-inicio" type="date" [value]="fechaInicioFiltro()" (change)="actualizarFechaInicio($event)"></div>
+      <div class="filter-field"><label for="fecha-fin"><i class="bi bi-calendar-check"></i> Fecha fin</label><input id="fecha-fin" type="date" [value]="fechaFinFiltro()" (change)="actualizarFechaFin($event)"></div>
+      <div class="filter-actions"><button class="button button-primary" type="button" (click)="aplicarFiltro()"><i class="bi bi-funnel"></i> Aplicar filtro</button><button class="button button-secondary" type="button" (click)="limpiarFiltro()"><i class="bi bi-arrow-counterclockwise"></i> Limpiar</button></div>
+    </section>
+
+    <section class="kpi-grid">
+      <a class="kpi-card blue" routerLink="/clientes"><div class="kpi-header"><span>Total clientes</span><i class="bi bi-people"></i></div><strong>{{ clientes().length }}</strong><small><i class="bi bi-people-fill"></i> Registrados en el sistema</small></a>
+      <a class="kpi-card green" routerLink="/ventas"><div class="kpi-header"><span>Ventas del periodo</span><i class="bi bi-receipt"></i></div><strong>{{ ventasPeriodo().length }}</strong><small><i class="bi bi-check-circle"></i> Ventas registradas</small></a>
+      <a class="kpi-card teal" routerLink="/ventas"><div class="kpi-header"><span>Ingresos por ventas</span><i class="bi bi-cash-coin"></i></div><strong class="currency">${{ formatearMoneda(ingresos()) }}</strong><small><i class="bi bi-arrow-up-right"></i> Total facturado</small></a>
+      <a class="kpi-card amber" routerLink="/servicios"><div class="kpi-header"><span>Reparaciones pendientes</span><i class="bi bi-tools"></i></div><strong>{{ pendientes() }}</strong><small><i class="bi bi-clock-history"></i> En proceso</small></a>
+      <a class="kpi-card green" routerLink="/servicios/finalizados"><div class="kpi-header"><span>Reparaciones terminadas</span><i class="bi bi-check2-square"></i></div><strong>{{ terminadas() }}</strong><small><i class="bi bi-check-circle"></i> Completadas</small></a>
+      <a class="kpi-card purple" routerLink="/productos"><div class="kpi-header"><span>Productos disponibles</span><i class="bi bi-box-seam"></i></div><strong>{{ productosDisponibles() }}</strong><small><i class="bi bi-boxes"></i> En inventario</small></a>
+      <a class="kpi-card red" routerLink="/productos"><div class="kpi-header"><span>Stock bajo</span><i class="bi bi-exclamation-triangle"></i></div><strong>{{ stockBajo() }}</strong><small><i class="bi bi-arrow-down"></i> Requiere reposición</small></a>
+      <a class="kpi-card slate" routerLink="/servicios"><div class="kpi-header"><span>Tasa de finalización</span><i class="bi bi-percent"></i></div><strong>{{ tasaFinalizacion() }}%</strong><div class="progress"><span [style.width.%]="tasaFinalizacion()"></span></div></a>
+    </section>
+
+    <section class="charts-grid charts-main">
+      <article class="section-card chart-card chart-wide"><h2><i class="bi bi-bar-chart-line"></i> Ventas por mes</h2><div class="bar-chart">@for (item of ventasPorMes(); track item.label) { <div class="bar-column"><span>{{ item.value }}</span><div class="bar" [style.height.%]="(item.value / maxValue(ventasPorMes())) * 100"></div><small>{{ item.label }}</small></div> }</div>@if (!ventasPeriodo().length) { <p class="empty-inline">No hay ventas registradas en este rango de fechas.</p> }</article>
+      <article class="section-card chart-card"><h2><i class="bi bi-pie-chart"></i> Estado de reparaciones</h2><div class="donut-wrap"><div class="donut" [style.background]="estadosReparacion().length ? 'conic-gradient(' + estadosReparacion().map((item, index) => colorEstado(index) + ' ' + (porcentajeEstado(item.value) * index) + '% ' + (porcentajeEstado(item.value) * (index + 1)) + '%').join(', ') + ')' : '#e2e8f0'"><strong>{{ serviciosPeriodo().length }}</strong><small>servicios</small></div></div><div class="legend">@for (item of estadosReparacion(); track item.label; let i = $index) { <span><i [style.background]="colorEstado(i)"></i>{{ item.label }} ({{ item.value }})</span> }</div>@if (!serviciosPeriodo().length) { <p class="empty-inline">No hay servicios registrados en este rango.</p> }</article>
+    </section>
+
+    <section class="charts-grid">
+      <article class="section-card chart-card"><h2><i class="bi bi-graph-up"></i> Clientes nuevos por mes</h2><div class="line-chart">@for (item of clientesNuevosPorMes(); track item.label) { <div class="line-column"><span>{{ item.value }}</span><div class="line-point" [style.bottom.%]="(item.value / maxValue(clientesNuevosPorMes())) * 75 + 10"></div><small>{{ item.label }}</small></div> }</div></article>
+      <article class="section-card chart-card"><h2><i class="bi bi-trophy"></i> Productos más vendidos</h2>@if (productosMasVendidos().length) { <div class="rank-list">@for (item of productosMasVendidos(); track item.name; let i = $index) { <div><span><b>#{{ i + 1 }}</b>{{ item.name }}</span><em>{{ item.quantity }} vendidos</em></div> }</div> } @else { <p class="empty-inline">No hay ventas registradas todavía.</p> }</article>
+    </section>
+
+    <section class="charts-grid">
+      <article class="section-card chart-card"><h2 class="danger-title"><i class="bi bi-exclamation-triangle"></i> Alertas de stock bajo</h2>@if (alertasStock().length) { <div class="alert-list">@for (producto of alertasStock(); track producto.codigo_producto) { <a routerLink="/productos/{{ producto.codigo_producto }}/editar"><strong>{{ producto.nombre_producto }}</strong><span>{{ producto.stock_disponible_producto }} / {{ producto.stock_minimo_producto }}</span></a> }</div> } @else { <p class="empty-inline success-text"><i class="bi bi-check-circle"></i> No hay productos con stock bajo.</p> }</article>
+      <article class="section-card chart-card"><h2 class="warning-title"><i class="bi bi-clock-history"></i> Reparaciones atrasadas</h2>@if (reparacionesAtrasadas().length) { <div class="alert-list delayed-list">@for (servicio of reparacionesAtrasadas(); track servicio.codigo_servicio) { <a routerLink="/servicios/{{ servicio.codigo_servicio }}/editar"><strong>{{ servicio.cliente_nombre || 'Cliente sin nombre' }}</strong><span>{{ formatearFecha(servicio.fecha_servicio) }}</span></a> }</div> } @else { <p class="empty-inline success-text"><i class="bi bi-check-circle"></i> No hay reparaciones atrasadas.</p> }</article>
+    </section>
+  }
 </main>

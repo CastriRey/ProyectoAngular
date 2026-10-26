@@ -61,3 +61,7 @@
 .factura-footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; color: #666; text-align: center; }
 .factura-actions { display: flex; justify-content: center; gap: 1rem; margin: 2rem auto 0; }
 @media (max-width: 760px) { .factura-container, .factura { padding: 1rem; } .cliente-info, .factura-info-grid { grid-template-columns: 1fr; } .legacy-product-add { grid-template-columns: 1fr; } .legacy-product-add button { grid-column: auto; } .factura-header { align-items: flex-start; flex-direction: column; } .factura-fecha { text-align: left; } .factura-actions { align-items: stretch; flex-direction: column; } }
+.stock-hint { margin: 8px 0 0; color: #64748b; font-size: .85rem; }
+.stock-hint.stock-error { color: #b91c1c; font-weight: 600; }
+.sales-form button:disabled { cursor: not-allowed; opacity: .6; }
+#Venta-color { color: #00d131; }
